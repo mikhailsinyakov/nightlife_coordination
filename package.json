@@ -1,27 +1,22 @@
 {
-  "name": "clementinejs-fcc",
+  "name": "nightlife_coordination",
   "version": "1.0.1",
-  "description": "The elegant and lightweight boilerplate for full stack JavaScript.",
+  "description": "App for searching bars in your area",
   "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johnstonbl01/clementinejs-fcc"
+    "url": "https://github.com/mikhailsinyakov/nightlife_coordination"
   },
-  "homepage": "http://www.clementinejs.com/",
-  "bugs": "https://github.com/johnstonbl01/clementinejs-fcc/issues",
+  "homepage": "https://nightlife-coordination-mikhailsinyakov.c9users.io",
   "keywords": [
-    "MongoDB",
-    "Mongoose",
-    "full stack",
-    "Express",
-    "Node",
-    "javascript",
-    "boilerplate"
+    "nightlife",
+    "bars",
+    "search"
   ],
   "scripts": {
-  "start": "node server.js"
+    "start": "node server.js"
   },
-  "author": "Blake Johnston",
+  "author": "Mikhail Sinyakov",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^1.2.0",

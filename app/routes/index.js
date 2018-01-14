@@ -1,9 +1,8 @@
 'use strict';
 
-var path = process.cwd();
-var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
+const path = process.cwd();
 
-module.exports = function (app, passport) {
+module.exports = (app, passport) => {
 
 	function isLoggedIn (req, res, next) {
 		if (req.isAuthenticated()) {
@@ -13,31 +12,29 @@ module.exports = function (app, passport) {
 		}
 	}
 
-	var clickHandler = new ClickHandler();
-
 	app.route('/')
-		.get(isLoggedIn, function (req, res) {
+		.get(isLoggedIn, (req, res) => {
 			res.sendFile(path + '/public/index.html');
 		});
 
 	app.route('/login')
-		.get(function (req, res) {
+		.get((req, res) => {
 			res.sendFile(path + '/public/login.html');
 		});
 
 	app.route('/logout')
-		.get(function (req, res) {
+		.get((req, res) => {
 			req.logout();
 			res.redirect('/login');
 		});
 
 	app.route('/profile')
-		.get(isLoggedIn, function (req, res) {
+		.get(isLoggedIn, (req, res) => {
 			res.sendFile(path + '/public/profile.html');
 		});
 
 	app.route('/api/:id')
-		.get(isLoggedIn, function (req, res) {
+		.get(isLoggedIn, (req, res) => {
 			res.json(req.user.github);
 		});
 
@@ -49,9 +46,4 @@ module.exports = function (app, passport) {
 			successRedirect: '/',
 			failureRedirect: '/login'
 		}));
-
-	app.route('/api/:id/clicks')
-		.get(isLoggedIn, clickHandler.getClicks)
-		.post(isLoggedIn, clickHandler.addClick)
-		.delete(isLoggedIn, clickHandler.resetClicks);
 };
