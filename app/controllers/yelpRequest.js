@@ -31,16 +31,26 @@ function YelpRequest() {
         };
         request(options, (error, response, body) => {
             if (error) return res.sendStatus(500);
+            try {
+                JSON.parse(body);
+            }
+            catch (err) {
+                return res.sendStatus(502);
+            }
             body = JSON.parse(body);
             const businesses = body.businesses || [];
+            if (!businesses.length) return res.sendStatus(404);
             const results = businesses.map(val => {
                 return {
                     id: val.id,
                     name: val.name,
+                    rating: val.rating,
+                    address: val.location.address1,
                     url: val.url,
                     image_url: val.image_url
                 };
             });
+            
             res.json(results);
         });
     };
