@@ -30,17 +30,14 @@ module.exports = passport => {
 				if (user) {
 					return done(null, user);
 				} else {
-					var newUser = new User();
+					const newUser = new User();
 
 					newUser.github.id = profile.id;
 					newUser.github.username = profile.username;
 					newUser.github.displayName = profile.displayName;
-					newUser.github.publicRepos = profile._json.public_repos;
 
 					newUser.save(err => {
-						if (err) {
-							throw err;
-						}
+						if (err) throw err;
 
 						return done(null, newUser);
 					});

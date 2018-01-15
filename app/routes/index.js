@@ -1,6 +1,7 @@
 'use strict';
 
 const path = process.cwd();
+const YelpRequest = require("../controllers/yelpRequest");
 
 module.exports = (app, passport) => {
 
@@ -11,32 +12,29 @@ module.exports = (app, passport) => {
 			res.redirect('/login');
 		}
 	}
+	const yelpRequest = new YelpRequest();
 
 	app.route('/')
-		.get(isLoggedIn, (req, res) => {
-			res.sendFile(path + '/public/index.html');
-		});
-
-	app.route('/login')
 		.get((req, res) => {
-			res.sendFile(path + '/public/login.html');
+			res.sendFile(path + '/public/index.html');
 		});
 
 	app.route('/logout')
 		.get((req, res) => {
 			req.logout();
-			res.redirect('/login');
-		});
-
-	app.route('/profile')
-		.get(isLoggedIn, (req, res) => {
-			res.sendFile(path + '/public/profile.html');
+			res.redirect('/');
 		});
 
 	app.route('/api/:id')
-		.get(isLoggedIn, (req, res) => {
+		.get((req, res) => {
 			res.json(req.user.github);
 		});
+		
+	app.route('/api/yelpRequest/position/:latitude/:longitude/:page')
+		.get(yelpRequest.setPositionQueries);
+		
+	app.route('/api/yelpRequest/location/:location/:page')
+		.get(yelpRequest.setLocationQuery);
 
 	app.route('/auth/github')
 		.get(passport.authenticate('github'));
