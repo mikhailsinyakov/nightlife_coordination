@@ -30,7 +30,7 @@ function YelpRequest() {
             }
         };
         request(options, (error, response, body) => {
-            if (error) throw error;
+            if (error) return res.sendStatus(500);
             body = JSON.parse(body);
             const businesses = body.businesses || [];
             const results = businesses.map(val => {

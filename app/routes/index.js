@@ -2,6 +2,7 @@
 
 const path = process.cwd();
 const YelpRequest = require("../controllers/yelpRequest");
+const BarHandler = require("../controllers/barHandler.server");
 
 module.exports = (app, passport) => {
 
@@ -9,10 +10,11 @@ module.exports = (app, passport) => {
 		if (req.isAuthenticated()) {
 			return next();
 		} else {
-			res.redirect('/login');
+			res.redirect('/auth/github');
 		}
 	}
 	const yelpRequest = new YelpRequest();
+	const barHandler = new BarHandler();
 
 	app.route('/')
 		.get((req, res) => {
@@ -26,15 +28,22 @@ module.exports = (app, passport) => {
 		});
 
 	app.route('/api/:id')
-		.get((req, res) => {
-			res.json(req.user.github);
-		});
+		.get((req, res) => res.json(req.user.github));
 		
 	app.route('/api/yelpRequest/position/:latitude/:longitude/:page')
 		.get(yelpRequest.setPositionQueries);
 		
 	app.route('/api/yelpRequest/location/:location/:page')
 		.get(yelpRequest.setLocationQuery);
+		
+	app.route('/api/:id/getBars')
+		.get(barHandler.getListOfSelectedBars);
+		
+	app.route('/api/addUserTo/:yelp_id')
+		.put(isLoggedIn, (req, res) => barHandler.addUserToBarsVisitors(req, res));
+		
+	app.route('/api/removeUserFrom/:yelp_id')
+		.delete(isLoggedIn, (req, res) => barHandler.removeUserFromBarsVisitors(req, res));
 
 	app.route('/auth/github')
 		.get(passport.authenticate('github'));
