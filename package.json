@@ -14,7 +14,15 @@
     "search"
   ],
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "babel ./app/src -d ./app/lib -w"
+  },
+  "babel": {
+    "presets": [
+      "react",
+      "env"
+    ],
+    "plugins": []
   },
   "author": "Mikhail Sinyakov",
   "license": "MIT",
@@ -27,6 +35,15 @@
     "nodemon": "^1.14.11",
     "passport": "^0.3.0",
     "passport-github": "^1.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "request": "^2.83.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "webpack": "^3.10.0"
   }
 }
