@@ -1052,9 +1052,7 @@ var App = function (_React$Component) {
                 if (bars.length) _this2.setState({
                     bars: bars,
                     notFound: false
-                });else {
-                    _this2.setState({ notFound: true });
-                }
+                });else _this2.setState({ notFound: true });
             });
         }
     }, {
@@ -1066,9 +1064,7 @@ var App = function (_React$Component) {
                 if (bars.length) _this3.setState({
                     bars: bars,
                     notFound: false
-                });else {
-                    _this3.setState({ notFound: true });
-                }
+                });else _this3.setState({ notFound: true });
             });
         }
     }, {
@@ -7948,17 +7944,19 @@ function YelpController(callback) {
     };
 
     this.getBarsByPosition = function (callback) {
-        if (!window.navigator.geolocation) {
-            return alert("Turn on geolocation on your computer, please");
-        }
-        window.navigator.geolocation.getCurrentPosition(function (pos) {
+        window.navigator.geolocation.getCurrentPosition(success, error);
+
+        function success(pos) {
             var latitude = pos.coords.latitude;
             var longitude = pos.coords.longitude;
             var apiUrl = appUrl + ('/api/yelpRequest/position/' + latitude + '/' + longitude + '/1');
             _ajaxFunctions2.default.ready(_ajaxFunctions2.default.ajaxRequest('GET', apiUrl, function (data) {
                 return callback(JSON.parse(data));
             }));
-        });
+        }
+        function error() {
+            alert("Turn on geolocation on your computer, please");
+        }
     };
 }
 
@@ -8134,7 +8132,7 @@ var Search = function (_React$Component) {
                 _react2.default.createElement(
                     "form",
                     { onSubmit: this.handleSubmit },
-                    _react2.default.createElement("input", { type: "text", value: this.state.value, onChange: this.handleChange }),
+                    _react2.default.createElement("input", { type: "text", value: this.state.value, onChange: this.handleChange, placeholder: "Enter city", required: true }),
                     _react2.default.createElement("input", { type: "submit", value: "Search" })
                 ),
                 _react2.default.createElement(

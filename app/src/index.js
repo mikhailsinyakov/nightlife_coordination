@@ -28,9 +28,7 @@ class App extends React.Component {
                     bars,
                     notFound: false
                 });
-                else {
-                    this.setState({notFound: true});
-                }
+                else this.setState({notFound: true});
             });
     }
     
@@ -40,9 +38,7 @@ class App extends React.Component {
                     bars,
                     notFound: false
                 });
-                else {
-                    this.setState({notFound: true});
-                }
+                else this.setState({notFound: true});
             });
     }
     

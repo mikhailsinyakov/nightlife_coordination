@@ -23,7 +23,7 @@ class Search extends React.Component {
         return (
             <div>
                 <form onSubmit={this.handleSubmit}>
-                    <input type="text" value={this.state.value} onChange={this.handleChange} />
+                    <input type="text" value={this.state.value} onChange={this.handleChange} placeholder="Enter city" required/>
                     <input type="submit" value="Search" />
                 </form>
                 <button onClick={this.props.getBarsByPosition}>Find bars in your position</button>
