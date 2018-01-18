@@ -1,21 +1,12 @@
-'use strict';
+import ajaxFunctions from '../common/ajax-functions.js';
+const appUrl = window.location.origin;
 
-(function () {
-
-   const displayName = document.querySelector('#display-name');
+function userController (callback) {
    const apiUrl = appUrl + '/api/:id';
 
-   function updateHtmlElement (data, element, userProperty) {
-      element.innerHTML = data[userProperty];
-   }
-
-   ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', apiUrl, data => {
-      const userObject = JSON.parse(data);
-
-      if (userObject.displayName !== null) {
-         updateHtmlElement(userObject, displayName, 'displayName');
-      } else {
-         updateHtmlElement(userObject, displayName, 'username');
-      }
+   ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', apiUrl, user => {
+      return callback(JSON.parse(user));
    }));
-})();
+}
+
+export default userController;

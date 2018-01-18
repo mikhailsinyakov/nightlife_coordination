@@ -39,7 +39,7 @@ function YelpRequest() {
             }
             body = JSON.parse(body);
             const businesses = body.businesses || [];
-            if (!businesses.length) return res.sendStatus(404);
+            if (!businesses.length) return res.json([]);
             const results = businesses.map(val => {
                 return {
                     id: val.id,

@@ -17,9 +17,7 @@ module.exports = (app, passport) => {
 	const barHandler = new BarHandler();
 
 	app.route('/')
-		.get((req, res) => {
-			res.sendFile(path + '/public/index.html');
-		});
+		.get((req, res) => res.sendFile(path + '/public/index.html'));
 
 	app.route('/logout')
 		.get((req, res) => {
@@ -28,7 +26,7 @@ module.exports = (app, passport) => {
 		});
 
 	app.route('/api/:id')
-		.get((req, res) => res.json(req.user.github));
+		.get((req, res) => req.user ? res.json(req.user) : res.json({}));
 		
 	app.route('/api/yelpRequest/position/:latitude/:longitude/:page')
 		.get(yelpRequest.setPositionQueries);
@@ -51,6 +49,6 @@ module.exports = (app, passport) => {
 	app.route('/auth/github/callback')
 		.get(passport.authenticate('github', {
 			successRedirect: '/',
-			failureRedirect: '/login'
+			failureRedirect: '/'
 		}));
 };

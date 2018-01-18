@@ -1,6 +1,3 @@
-'use strict';
-
-const appUrl = window.location.origin;
 const ajaxFunctions = {
    ready: function ready (fn) {
       if (typeof fn !== 'function') {
@@ -26,3 +23,5 @@ const ajaxFunctions = {
       xmlhttp.send();
    }
 };
+
+export default ajaxFunctions;
