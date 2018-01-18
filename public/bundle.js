@@ -68,6 +68,20 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+if (process.env.NODE_ENV === 'production') {
+  module.exports = __webpack_require__(16);
+} else {
+  module.exports = __webpack_require__(17);
+}
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 // shim for using process in browser
@@ -257,20 +271,6 @@ process.umask = function () {
 };
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports = __webpack_require__(16);
-} else {
-  module.exports = __webpack_require__(17);
-}
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -430,7 +430,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = emptyObject;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 5 */
@@ -490,7 +490,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 }
 
 module.exports = invariant;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 6 */
@@ -559,7 +559,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = warning;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 7 */
@@ -665,7 +665,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 }
 
 module.exports = checkPropTypes;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 9 */
@@ -785,7 +785,7 @@ var EventListener = {
 };
 
 module.exports = EventListener;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 11 */
@@ -985,7 +985,7 @@ module.exports = focusNode;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -1013,6 +1013,10 @@ var _Search = __webpack_require__(34);
 
 var _Search2 = _interopRequireDefault(_Search);
 
+var _Results = __webpack_require__(35);
+
+var _Results2 = _interopRequireDefault(_Results);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1036,56 +1040,88 @@ var App = function (_React$Component) {
         _this.state = {
             user: null,
             bars: [],
+            selectedBars: [],
             notFound: false
         };
+        _this.getUserData = _this.getUserData.bind(_this);
+        _this.getSelectedBars = _this.getSelectedBars.bind(_this);
         _this.getBarsByLocation = _this.getBarsByLocation.bind(_this);
         _this.getBarsByPosition = _this.getBarsByPosition.bind(_this);
+        _this.addUserToBar = _this.addUserToBar.bind(_this);
+        _this.removeUserFromBar = _this.removeUserFromBar.bind(_this);
         return _this;
     }
 
     _createClass(App, [{
-        key: 'getBarsByLocation',
-        value: function getBarsByLocation(search) {
+        key: 'getUserData',
+        value: function getUserData() {
             var _this2 = this;
 
+            (0, _userControllerClient2.default)(function (user) {
+                if (user._id) _this2.setState({ user: user });
+            });
+        }
+    }, {
+        key: 'getSelectedBars',
+        value: function getSelectedBars() {
+            var _this3 = this;
+
+            barController.getBars(function (selectedBars) {
+                _this3.setState({ selectedBars: selectedBars });
+            });
+        }
+    }, {
+        key: 'getBarsByLocation',
+        value: function getBarsByLocation(search) {
+            var _this4 = this;
+
             yelpController.getBarsByLocation(search, function (bars) {
-                if (bars.length) _this2.setState({
+                if (bars.length) _this4.setState({
                     bars: bars,
                     notFound: false
-                });else _this2.setState({ notFound: true });
+                });else _this4.setState({ notFound: true });
             });
         }
     }, {
         key: 'getBarsByPosition',
         value: function getBarsByPosition() {
-            var _this3 = this;
+            var _this5 = this;
 
             yelpController.getBarsByPosition(function (bars) {
-                if (bars.length) _this3.setState({
+                if (bars.length) _this5.setState({
                     bars: bars,
                     notFound: false
-                });else _this3.setState({ notFound: true });
+                });else _this5.setState({ notFound: true });
             });
+        }
+    }, {
+        key: 'addUserToBar',
+        value: function addUserToBar(yelp_id) {
+            barController.addUserToBarsVisitors(yelp_id, this.getSelectedBars);
+        }
+    }, {
+        key: 'removeUserFromBar',
+        value: function removeUserFromBar(yelp_id) {
+            barController.removeUserFromBarsVisitors(yelp_id, this.getSelectedBars);
         }
     }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
-            var _this4 = this;
-
-            (0, _userControllerClient2.default)(function (user) {
-                if (user._id) _this4.setState({ user: user });
-            });
+            this.getUserData();
+            this.getSelectedBars();
         }
     }, {
         key: 'render',
         value: function render() {
-            console.log(this.state);
             return _react2.default.createElement(
                 'div',
                 null,
                 _react2.default.createElement(_Header2.default, { username: this.state.user ? this.state.user.github.username : null }),
                 _react2.default.createElement(_Search2.default, { getBarsByLocation: this.getBarsByLocation,
-                    getBarsByPosition: this.getBarsByPosition })
+                    getBarsByPosition: this.getBarsByPosition }),
+                _react2.default.createElement(_Results2.default, { user: this.state.user, bars: this.state.bars,
+                    selectedBars: this.state.selectedBars, notFound: this.state.notFound,
+                    addUserToBar: this.addUserToBar, removeUserFromBar: this.removeUserFromBar })
             );
         }
     }]);
@@ -2582,7 +2618,7 @@ if (process.env.NODE_ENV !== "production") {
     module.exports = react;
   })();
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 18 */
@@ -2642,7 +2678,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   module.exports = __webpack_require__(23);
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 20 */
@@ -2665,7 +2701,7 @@ if (process.env.NODE_ENV === 'production') {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var aa = __webpack_require__(1),
+var aa = __webpack_require__(0),
     l = __webpack_require__(9),
     B = __webpack_require__(3),
     C = __webpack_require__(2),
@@ -4712,7 +4748,7 @@ module.exports = isNode;
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- */var _typeof=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};if(process.env.NODE_ENV!=="production"){(function(){'use strict';var React=__webpack_require__(1);var invariant=__webpack_require__(5);var warning=__webpack_require__(6);var ExecutionEnvironment=__webpack_require__(9);var _assign=__webpack_require__(3);var emptyFunction=__webpack_require__(2);var EventListener=__webpack_require__(10);var getActiveElement=__webpack_require__(11);var shallowEqual=__webpack_require__(12);var containsNode=__webpack_require__(13);var focusNode=__webpack_require__(14);var emptyObject=__webpack_require__(4);var checkPropTypes=__webpack_require__(8);var hyphenateStyleName=__webpack_require__(24);var camelizeStyleName=__webpack_require__(26);/**
+ */var _typeof=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};if(process.env.NODE_ENV!=="production"){(function(){'use strict';var React=__webpack_require__(0);var invariant=__webpack_require__(5);var warning=__webpack_require__(6);var ExecutionEnvironment=__webpack_require__(9);var _assign=__webpack_require__(3);var emptyFunction=__webpack_require__(2);var EventListener=__webpack_require__(10);var getActiveElement=__webpack_require__(11);var shallowEqual=__webpack_require__(12);var containsNode=__webpack_require__(13);var focusNode=__webpack_require__(14);var emptyObject=__webpack_require__(4);var checkPropTypes=__webpack_require__(8);var hyphenateStyleName=__webpack_require__(24);var camelizeStyleName=__webpack_require__(26);/**
  * WARNING: DO NOT manually require this module.
  * This is a replacement for `invariant(...)` used by the error code system
  * and will _only_ be required by the corresponding babel pass.
@@ -7682,7 +7718,7 @@ if(navigator.userAgent.indexOf('Chrome')>-1&&navigator.userAgent.indexOf('Edge')
 if(/^(https?|file):$/.test(protocol)){console.info('%cDownload the React DevTools '+'for a better development experience: '+'https://fb.me/react-devtools'+(protocol==='file:'?'\nYou might need to use a local HTTP server (instead of file://): '+'https://fb.me/react-devtools-faq':''),'font-weight:bold');}}}}var ReactDOM$2=Object.freeze({default:ReactDOM});var ReactDOM$3=ReactDOM$2&&ReactDOM||ReactDOM$2;// TODO: decide on the top-level export form.
 // This is hacky but makes it work with both Rollup and Jest.
 var reactDom=ReactDOM$3['default']?ReactDOM$3['default']:ReactDOM$3;module.exports=reactDom;})();}
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 24 */
@@ -7955,7 +7991,7 @@ function YelpController(callback) {
             }));
         }
         function error() {
-            alert("Turn on geolocation on your computer, please");
+            alert("Geolocation doesn't work on your computer");
         }
     };
 }
@@ -7973,7 +8009,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -8017,7 +8053,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -8050,7 +8086,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -8084,7 +8120,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -8148,6 +8184,178 @@ var Search = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Search;
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _ResultItem = __webpack_require__(36);
+
+var _ResultItem2 = _interopRequireDefault(_ResultItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Results(props) {
+    if (props.notFound) {
+        return _react2.default.createElement(
+            'p',
+            null,
+            'No bars found by your request'
+        );
+    }
+    var resultItems = props.bars.map(function (val) {
+        return _react2.default.createElement(_ResultItem2.default, { key: val.id, id: val.id, name: val.name, image_url: val.image_url,
+            address: val.address, url: val.url, rating: val.rating,
+            visitors: getVisitors(val.id), userIsVisitor: userIsVisitor(val.id),
+            addUserToBar: props.addUserToBar, removeUserFromBar: props.removeUserFromBar });
+    });
+
+    return _react2.default.createElement(
+        'div',
+        null,
+        resultItems
+    );
+
+    function getVisitors(id) {
+        var matchedBars = props.selectedBars.filter(function (val) {
+            return val.yelp_id == id;
+        });
+        if (!matchedBars.length) return 0;
+        return matchedBars[0].visitors.length;
+    }
+
+    function userIsVisitor(id) {
+        if (!getVisitors(id)) return false;
+        if (!props.user) return false;
+        var bar = props.selectedBars.filter(function (val) {
+            return val.yelp_id == id;
+        })[0];
+        var matchedVisitors = bar.visitors.filter(function (val) {
+            return val.id == props.user._id;
+        });
+        if (!matchedVisitors.length) return false;
+        return true;
+    }
+}
+
+exports.default = Results;
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _ToggleGoingToBar = __webpack_require__(37);
+
+var _ToggleGoingToBar2 = _interopRequireDefault(_ToggleGoingToBar);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ResultItem(props) {
+    return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement('img', { src: props.image_url, alt: props.name, width: '50', height: '50' }),
+        _react2.default.createElement(
+            'p',
+            null,
+            _react2.default.createElement(
+                'a',
+                { href: props.url },
+                props.name
+            ),
+            _react2.default.createElement(
+                'span',
+                null,
+                props.rating
+            )
+        ),
+        _react2.default.createElement(_ToggleGoingToBar2.default, { visitors: props.visitors, userIsVisitor: props.userIsVisitor,
+            yelp_id: props.id, addUserToBar: props.addUserToBar,
+            removeUserFromBar: props.removeUserFromBar }),
+        _react2.default.createElement(
+            'p',
+            null,
+            props.address
+        )
+    );
+}
+
+exports.default = ResultItem;
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ToggleGoingToBar(props) {
+    if (props.userIsVisitor) {
+        return _react2.default.createElement(
+            'p',
+            null,
+            _react2.default.createElement(
+                'button',
+                null,
+                props.visitors,
+                ' GOING '
+            ),
+            _react2.default.createElement(
+                'button',
+                { onClick: function onClick() {
+                        return props.removeUserFromBar(props.yelp_id);
+                    } },
+                'I changed my mind'
+            )
+        );
+    }
+    return _react2.default.createElement(
+        'p',
+        null,
+        _react2.default.createElement(
+            'button',
+            { onClick: function onClick() {
+                    return props.addUserToBar(props.yelp_id);
+                } },
+            props.visitors,
+            ' GOING '
+        )
+    );
+}
+
+exports.default = ToggleGoingToBar;
 
 /***/ })
 /******/ ]);

@@ -5,6 +5,7 @@ import BarController from '../controllers/barController.client.js';
 import YelpController from '../controllers/yelpController.client.js';
 import Header from '../components/Header.js';
 import Search from '../components/Search.js';
+import Results from '../components/Results.js';
 
 const app = document.querySelector("#root");
 const barController = new BarController();
@@ -16,10 +17,27 @@ class App extends React.Component {
         this.state = {
             user: null,
             bars: [],
+            selectedBars: [],
             notFound: false
         };
+        this.getUserData = this.getUserData.bind(this);
+        this.getSelectedBars = this.getSelectedBars.bind(this);
         this.getBarsByLocation = this.getBarsByLocation.bind(this);
         this.getBarsByPosition = this.getBarsByPosition.bind(this);
+        this.addUserToBar = this.addUserToBar.bind(this);
+        this.removeUserFromBar = this.removeUserFromBar.bind(this);
+    }
+    
+    getUserData() {
+        userController(user => {
+            if (user._id) this.setState({user});
+        });
+    }
+    
+    getSelectedBars() {
+        barController.getBars(selectedBars => {
+            this.setState({selectedBars});
+        });
     }
     
     getBarsByLocation(search) {
@@ -42,20 +60,29 @@ class App extends React.Component {
             });
     }
     
+    addUserToBar(yelp_id) {
+        barController.addUserToBarsVisitors(yelp_id, this.getSelectedBars);
+    }
+    
+    removeUserFromBar(yelp_id) {
+        barController.removeUserFromBarsVisitors(yelp_id, this.getSelectedBars);
+    }
+    
     componentDidMount() {
-        userController(user => {
-            if (user._id) this.setState({user});
-        });
+        this.getUserData();
+        this.getSelectedBars();
     }
     
     render() {
-        console.log(this.state)
         return (
             <div>
                 <Header username={this.state.user ? this.state.user.github.username
                                                   : null}/>
                 <Search getBarsByLocation={this.getBarsByLocation}
                         getBarsByPosition={this.getBarsByPosition}/>
+                <Results user={this.state.user} bars={this.state.bars} 
+                        selectedBars={this.state.selectedBars} notFound={this.state.notFound}
+                        addUserToBar={this.addUserToBar} removeUserFromBar={this.removeUserFromBar}/>
             </div>
         );
     }
