@@ -587,8 +587,8 @@ var ajaxFunctions = {
       var xmlhttp = new XMLHttpRequest();
 
       xmlhttp.onreadystatechange = function () {
-         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            callback(xmlhttp.response);
+         if (xmlhttp.readyState === 4) {
+            if (callback) callback(xmlhttp.response, xmlhttp.status);
          }
       };
 
@@ -1017,6 +1017,10 @@ var _Results = __webpack_require__(35);
 
 var _Results2 = _interopRequireDefault(_Results);
 
+var _LoginMessage = __webpack_require__(38);
+
+var _LoginMessage2 = _interopRequireDefault(_LoginMessage);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1041,7 +1045,9 @@ var App = function (_React$Component) {
             user: null,
             bars: [],
             selectedBars: [],
-            notFound: false
+            notFound: false,
+            showLoginMessage: false,
+            loginMessageCoords: []
         };
         _this.getUserData = _this.getUserData.bind(_this);
         _this.getSelectedBars = _this.getSelectedBars.bind(_this);
@@ -1049,6 +1055,7 @@ var App = function (_React$Component) {
         _this.getBarsByPosition = _this.getBarsByPosition.bind(_this);
         _this.addUserToBar = _this.addUserToBar.bind(_this);
         _this.removeUserFromBar = _this.removeUserFromBar.bind(_this);
+        _this.showLoginMessage = _this.showLoginMessage.bind(_this);
         return _this;
     }
 
@@ -1105,6 +1112,12 @@ var App = function (_React$Component) {
             barController.removeUserFromBarsVisitors(yelp_id, this.getSelectedBars);
         }
     }, {
+        key: 'showLoginMessage',
+        value: function showLoginMessage(x, y) {
+            if (!this.state.showLoginMessage) this.setState({ showLoginMessage: true });
+            this.setState({ loginMessageCoords: [x, y] });
+        }
+    }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
             this.getUserData();
@@ -1121,7 +1134,10 @@ var App = function (_React$Component) {
                     getBarsByPosition: this.getBarsByPosition }),
                 _react2.default.createElement(_Results2.default, { user: this.state.user, bars: this.state.bars,
                     selectedBars: this.state.selectedBars, notFound: this.state.notFound,
-                    addUserToBar: this.addUserToBar, removeUserFromBar: this.removeUserFromBar })
+                    addUserToBar: this.addUserToBar, removeUserFromBar: this.removeUserFromBar,
+                    showLoginMessage: this.showLoginMessage }),
+                _react2.default.createElement(_LoginMessage2.default, { showLoginMessage: this.state.showLoginMessage,
+                    loginMessageCoords: this.state.loginMessageCoords })
             );
         }
     }]);
@@ -7935,15 +7951,21 @@ function BarController(callback) {
 
     this.addUserToBarsVisitors = function (yelp_id, callback) {
         var apiUrl = appUrl + '/api/addUserTo/' + yelp_id;
-        _ajaxFunctions2.default.ready(_ajaxFunctions2.default.ajaxRequest('PUT', apiUrl, function (result) {
-            return callback(JSON.parse(result));
+        _ajaxFunctions2.default.ready(_ajaxFunctions2.default.ajaxRequest('PUT', apiUrl, function (result, status) {
+            if (status != 200) {
+                return alert(result);
+            }
+            return callback();
         }));
     };
 
     this.removeUserFromBarsVisitors = function (yelp_id, callback) {
         var apiUrl = appUrl + '/api/removeUserFrom/' + yelp_id;
-        _ajaxFunctions2.default.ready(_ajaxFunctions2.default.ajaxRequest('DELETE', apiUrl, function (result) {
-            return callback(JSON.parse(result));
+        _ajaxFunctions2.default.ready(_ajaxFunctions2.default.ajaxRequest('DELETE', apiUrl, function (result, status) {
+            if (status != 200) {
+                return alert(result);
+            }
+            return callback();
         }));
     };
 }
@@ -8218,7 +8240,8 @@ function Results(props) {
         return _react2.default.createElement(_ResultItem2.default, { key: val.id, id: val.id, name: val.name, image_url: val.image_url,
             address: val.address, url: val.url, rating: val.rating,
             visitors: getVisitors(val.id), userIsVisitor: userIsVisitor(val.id),
-            addUserToBar: props.addUserToBar, removeUserFromBar: props.removeUserFromBar });
+            addUserToBar: props.addUserToBar, removeUserFromBar: props.removeUserFromBar,
+            user: props.user, showLoginMessage: props.showLoginMessage });
     });
 
     return _react2.default.createElement(
@@ -8293,7 +8316,8 @@ function ResultItem(props) {
         ),
         _react2.default.createElement(_ToggleGoingToBar2.default, { visitors: props.visitors, userIsVisitor: props.userIsVisitor,
             yelp_id: props.id, addUserToBar: props.addUserToBar,
-            removeUserFromBar: props.removeUserFromBar }),
+            removeUserFromBar: props.removeUserFromBar,
+            user: props.user, showLoginMessage: props.showLoginMessage }),
         _react2.default.createElement(
             'p',
             null,
@@ -8346,8 +8370,14 @@ function ToggleGoingToBar(props) {
         null,
         _react2.default.createElement(
             'button',
-            { onClick: function onClick() {
-                    return props.addUserToBar(props.yelp_id);
+            { onClick: function onClick(e) {
+                    e.persist();
+                    if (!props.user) {
+                        var xCoord = e.pageX + 30;
+                        var yCoord = e.pageY - 70;
+                        return props.showLoginMessage(xCoord, yCoord);
+                    }
+                    props.addUserToBar(props.yelp_id);
                 } },
             props.visitors,
             ' GOING '
@@ -8356,6 +8386,56 @@ function ToggleGoingToBar(props) {
 }
 
 exports.default = ToggleGoingToBar;
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function LoginMessage(props) {
+    if (!props.showLoginMessage) return null;
+
+    var coords = props.loginMessageCoords;
+    var style = {
+        position: "absolute",
+        left: coords[0] + "px",
+        top: coords[1] + "px"
+    };
+
+    return _react2.default.createElement(
+        "div",
+        { style: style },
+        _react2.default.createElement(
+            "p",
+            null,
+            "You are not authenticated."
+        ),
+        _react2.default.createElement(
+            "p",
+            null,
+            "Please ",
+            _react2.default.createElement(
+                "a",
+                { href: "/auth/github" },
+                "Login"
+            )
+        )
+    );
+}
+
+exports.default = LoginMessage;
 
 /***/ })
 /******/ ]);

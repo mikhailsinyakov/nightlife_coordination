@@ -11,7 +11,16 @@ function ToggleGoingToBar(props) {
     }
     return (
         <p>
-            <button onClick={() => props.addUserToBar(props.yelp_id)}>{props.visitors} GOING </button>
+            <button onClick={ e => {
+                    e.persist();
+                    if (!props.user) {
+                        const xCoord = e.pageX + 30;
+                        const yCoord = e.pageY - 70;
+                        return props.showLoginMessage(xCoord, yCoord);
+                    }
+                    props.addUserToBar(props.yelp_id);
+                } 
+            }>{props.visitors} GOING </button>
         </p>
     );
 }

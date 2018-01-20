@@ -10,9 +10,10 @@ module.exports = (app, passport) => {
 		if (req.isAuthenticated()) {
 			return next();
 		} else {
-			res.redirect('/auth/github');
+			res.sendStatus(401);
 		}
 	}
+	
 	const yelpRequest = new YelpRequest();
 	const barHandler = new BarHandler();
 

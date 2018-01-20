@@ -12,15 +12,21 @@ function BarController(callback) {
     
     this.addUserToBarsVisitors = (yelp_id, callback) => {
         const apiUrl = `${appUrl}/api/addUserTo/${yelp_id}`;
-        ajaxFunctions.ready(ajaxFunctions.ajaxRequest('PUT', apiUrl, result => {
-            return callback(JSON.parse(result));
+        ajaxFunctions.ready(ajaxFunctions.ajaxRequest('PUT', apiUrl, (result, status) => {
+            if (status != 200) {
+                return alert(result);
+            }
+            return callback();
         }));
     };
     
     this.removeUserFromBarsVisitors = (yelp_id, callback) => {
         const apiUrl = `${appUrl}/api/removeUserFrom/${yelp_id}`;
-        ajaxFunctions.ready(ajaxFunctions.ajaxRequest('DELETE', apiUrl, result => {
-            return callback(JSON.parse(result));
+        ajaxFunctions.ready(ajaxFunctions.ajaxRequest('DELETE', apiUrl, (result, status) => {
+            if (status != 200) {
+                return alert(result);
+            }
+            return callback();
         }));
     };
     

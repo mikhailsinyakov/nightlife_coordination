@@ -12,7 +12,8 @@ function Results(props) {
             <ResultItem key={val.id} id={val.id} name={val.name} image_url={val.image_url}
                         address={val.address} url={val.url} rating={val.rating}
                         visitors={getVisitors(val.id)} userIsVisitor={userIsVisitor(val.id)}
-                        addUserToBar={props.addUserToBar} removeUserFromBar={props.removeUserFromBar}/>
+                        addUserToBar={props.addUserToBar} removeUserFromBar={props.removeUserFromBar}
+                        user={props.user} showLoginMessage={props.showLoginMessage}/>
         );
     });
     

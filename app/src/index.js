@@ -6,6 +6,7 @@ import YelpController from '../controllers/yelpController.client.js';
 import Header from '../components/Header.js';
 import Search from '../components/Search.js';
 import Results from '../components/Results.js';
+import LoginMessage from '../components/LoginMessage.js';
 
 const app = document.querySelector("#root");
 const barController = new BarController();
@@ -18,7 +19,9 @@ class App extends React.Component {
             user: null,
             bars: [],
             selectedBars: [],
-            notFound: false
+            notFound: false,
+            showLoginMessage: false,
+            loginMessageCoords: []
         };
         this.getUserData = this.getUserData.bind(this);
         this.getSelectedBars = this.getSelectedBars.bind(this);
@@ -26,6 +29,7 @@ class App extends React.Component {
         this.getBarsByPosition = this.getBarsByPosition.bind(this);
         this.addUserToBar = this.addUserToBar.bind(this);
         this.removeUserFromBar = this.removeUserFromBar.bind(this);
+        this.showLoginMessage = this.showLoginMessage.bind(this);
     }
     
     getUserData() {
@@ -68,10 +72,16 @@ class App extends React.Component {
         barController.removeUserFromBarsVisitors(yelp_id, this.getSelectedBars);
     }
     
+    showLoginMessage(x, y) {
+        if (!this.state.showLoginMessage) this.setState({showLoginMessage: true});
+        this.setState({loginMessageCoords: [x, y]});
+    }
+    
     componentDidMount() {
         this.getUserData();
         this.getSelectedBars();
     }
+    
     
     render() {
         return (
@@ -82,7 +92,11 @@ class App extends React.Component {
                         getBarsByPosition={this.getBarsByPosition}/>
                 <Results user={this.state.user} bars={this.state.bars} 
                         selectedBars={this.state.selectedBars} notFound={this.state.notFound}
-                        addUserToBar={this.addUserToBar} removeUserFromBar={this.removeUserFromBar}/>
+                        addUserToBar={this.addUserToBar} removeUserFromBar={this.removeUserFromBar}
+                        showLoginMessage={this.showLoginMessage}/>
+                        
+                <LoginMessage showLoginMessage={this.state.showLoginMessage}
+                              loginMessageCoords={this.state.loginMessageCoords} />
             </div>
         );
     }

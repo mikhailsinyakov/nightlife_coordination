@@ -11,7 +11,8 @@ function ResultItem(props) {
             </p>
             <ToggleGoingToBar visitors={props.visitors} userIsVisitor={props.userIsVisitor}
                               yelp_id={props.id} addUserToBar={props.addUserToBar} 
-                              removeUserFromBar={props.removeUserFromBar}/>
+                              removeUserFromBar={props.removeUserFromBar} 
+                              user={props.user} showLoginMessage={props.showLoginMessage}/>
             <p>{props.address}</p>
         </div>
     );

@@ -14,8 +14,8 @@ const ajaxFunctions = {
       var xmlhttp = new XMLHttpRequest();
 
       xmlhttp.onreadystatechange = () => {
-         if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            callback(xmlhttp.response);
+         if (xmlhttp.readyState === 4) {
+            if (callback) callback(xmlhttp.response, xmlhttp.status);
          }
       };
 
