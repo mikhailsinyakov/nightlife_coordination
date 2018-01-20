@@ -4,7 +4,7 @@ function MessageToUser(props) {
     return (
         <p>
             Welcome, {props.username} 
-            <a href="/logout">Logout</a>
+            <a href="/logout" onClick={props.saveLastSearchInStorage}>Logout</a>
         </p>
     );
 }

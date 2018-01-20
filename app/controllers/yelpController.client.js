@@ -7,7 +7,7 @@ function YelpController(callback) {
         const apiUrl = appUrl + `/api/yelpRequest/location/${search}/1`;
         
         ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', apiUrl, data => {
-            return callback(JSON.parse(data));
+            return callback(JSON.parse(data), apiUrl);
         }));
     };
     
@@ -19,7 +19,7 @@ function YelpController(callback) {
             const longitude = pos.coords.longitude;
             const apiUrl = appUrl + `/api/yelpRequest/position/${latitude}/${longitude}/1`;
             ajaxFunctions.ready(ajaxFunctions.ajaxRequest('GET', apiUrl, data => {
-                return callback(JSON.parse(data));
+                return callback(JSON.parse(data), apiUrl);
             }));
         }
         function error() {

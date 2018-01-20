@@ -7,8 +7,9 @@ function Header(props) {
         <header>
             <h1>Nightlife App</h1>
             <p>Will show you bars in your chosen area or in your location</p>
-            {props.username ? <MessageToUser username={props.username}/>
-                            : <MessageToGuest />}
+            {props.username ? <MessageToUser username={props.username}
+                                             saveLastSearchInStorage={props.saveLastSearchInStorage}/>
+                            : <MessageToGuest  saveLastSearchInStorage={props.saveLastSearchInStorage}/>}
         </header>
     );
 }

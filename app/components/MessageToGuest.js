@@ -4,7 +4,7 @@ function MessageToGuest(props) {
     return (
         <p>
             You are not authenticated 
-            <a href="/auth/github">Login</a>
+            <a href="/auth/github" onClick={props.saveLastSearchInStorage}>Login</a>
         </p>
     );
 }

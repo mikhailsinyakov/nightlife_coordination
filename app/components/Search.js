@@ -9,14 +9,18 @@ class Search extends React.Component {
     }
     
     handleChange(e) {
-        this.setState({
-            value: e.target.value
-        });
+        const value = e.target.value[0].toUpperCase() + e.target.value.slice(1);
+        this.setState({value});
     }
     
     handleSubmit(e) {
         this.props.getBarsByLocation(this.state.value);
         e.preventDefault();
+    }
+    
+    componentDidMount() {
+        const search = window.localStorage.getItem("search");
+        if (search) this.setState({value: search});
     }
     
     render() {

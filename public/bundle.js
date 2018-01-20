@@ -1046,8 +1046,10 @@ var App = function (_React$Component) {
             bars: [],
             selectedBars: [],
             notFound: false,
-            showLoginMessage: false,
-            loginMessageCoords: []
+            shownLoginMessage: false,
+            loginMessageCoords: [],
+            lastSearch: "",
+            lastSearchType: ""
         };
         _this.getUserData = _this.getUserData.bind(_this);
         _this.getSelectedBars = _this.getSelectedBars.bind(_this);
@@ -1056,6 +1058,9 @@ var App = function (_React$Component) {
         _this.addUserToBar = _this.addUserToBar.bind(_this);
         _this.removeUserFromBar = _this.removeUserFromBar.bind(_this);
         _this.showLoginMessage = _this.showLoginMessage.bind(_this);
+        _this.changeLastSearchAndUrl = _this.changeLastSearchAndUrl.bind(_this);
+        _this.saveLastSearchInStorage = _this.saveLastSearchInStorage.bind(_this);
+        _this.sendRequestWithLastSavedData = _this.sendRequestWithLastSavedData.bind(_this);
         return _this;
     }
 
@@ -1082,11 +1087,12 @@ var App = function (_React$Component) {
         value: function getBarsByLocation(search) {
             var _this4 = this;
 
-            yelpController.getBarsByLocation(search, function (bars) {
+            yelpController.getBarsByLocation(search, function (bars, url) {
                 if (bars.length) _this4.setState({
                     bars: bars,
                     notFound: false
                 });else _this4.setState({ notFound: true });
+                _this4.changeLastSearchAndUrl("location", search);
             });
         }
     }, {
@@ -1094,12 +1100,42 @@ var App = function (_React$Component) {
         value: function getBarsByPosition() {
             var _this5 = this;
 
-            yelpController.getBarsByPosition(function (bars) {
+            yelpController.getBarsByPosition(function (bars, url) {
                 if (bars.length) _this5.setState({
                     bars: bars,
                     notFound: false
                 });else _this5.setState({ notFound: true });
+                _this5.changeLastSearchAndUrl("position");
             });
+        }
+    }, {
+        key: 'changeLastSearchAndUrl',
+        value: function changeLastSearchAndUrl(type) {
+            var search = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+
+            this.setState({
+                lastSearchType: type,
+                lastSearch: search
+            });
+        }
+    }, {
+        key: 'saveLastSearchInStorage',
+        value: function saveLastSearchInStorage() {
+            if (this.state.lastSearch) window.localStorage.setItem("search", this.state.lastSearch);
+            if (this.state.lastSearchType) window.localStorage.setItem("search_type", this.state.lastSearchType);
+        }
+    }, {
+        key: 'sendRequestWithLastSavedData',
+        value: function sendRequestWithLastSavedData() {
+            var type = window.localStorage.getItem("search_type");
+            if (type == "location") {
+                var search = window.localStorage.getItem("search");
+                this.getBarsByLocation(search);
+            }
+            if (type == "position") this.getBarsByPosition();
+
+            window.localStorage.removeItem("search");
+            window.localStorage.removeItem("search_type");
         }
     }, {
         key: 'addUserToBar',
@@ -1114,7 +1150,7 @@ var App = function (_React$Component) {
     }, {
         key: 'showLoginMessage',
         value: function showLoginMessage(x, y) {
-            if (!this.state.showLoginMessage) this.setState({ showLoginMessage: true });
+            if (!this.state.shownLoginMessage) this.setState({ shownLoginMessage: true });
             this.setState({ loginMessageCoords: [x, y] });
         }
     }, {
@@ -1122,6 +1158,14 @@ var App = function (_React$Component) {
         value: function componentDidMount() {
             this.getUserData();
             this.getSelectedBars();
+
+            var type = window.localStorage.getItem("search_type");
+            if (type) this.sendRequestWithLastSavedData();
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate() {
+            //console.log(this.state.lastSearch, this.state.lastYelpRequestUrl)
         }
     }, {
         key: 'render',
@@ -1129,15 +1173,17 @@ var App = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 null,
-                _react2.default.createElement(_Header2.default, { username: this.state.user ? this.state.user.github.username : null }),
+                _react2.default.createElement(_Header2.default, { username: this.state.user ? this.state.user.github.username : null,
+                    saveLastSearchInStorage: this.saveLastSearchInStorage }),
                 _react2.default.createElement(_Search2.default, { getBarsByLocation: this.getBarsByLocation,
                     getBarsByPosition: this.getBarsByPosition }),
                 _react2.default.createElement(_Results2.default, { user: this.state.user, bars: this.state.bars,
                     selectedBars: this.state.selectedBars, notFound: this.state.notFound,
                     addUserToBar: this.addUserToBar, removeUserFromBar: this.removeUserFromBar,
                     showLoginMessage: this.showLoginMessage }),
-                _react2.default.createElement(_LoginMessage2.default, { showLoginMessage: this.state.showLoginMessage,
-                    loginMessageCoords: this.state.loginMessageCoords })
+                _react2.default.createElement(_LoginMessage2.default, { shownLoginMessage: this.state.shownLoginMessage,
+                    loginMessageCoords: this.state.loginMessageCoords,
+                    saveLastSearchInStorage: this.saveLastSearchInStorage })
             );
         }
     }]);
@@ -7997,7 +8043,7 @@ function YelpController(callback) {
         var apiUrl = appUrl + ('/api/yelpRequest/location/' + search + '/1');
 
         _ajaxFunctions2.default.ready(_ajaxFunctions2.default.ajaxRequest('GET', apiUrl, function (data) {
-            return callback(JSON.parse(data));
+            return callback(JSON.parse(data), apiUrl);
         }));
     };
 
@@ -8009,7 +8055,7 @@ function YelpController(callback) {
             var longitude = pos.coords.longitude;
             var apiUrl = appUrl + ('/api/yelpRequest/position/' + latitude + '/' + longitude + '/1');
             _ajaxFunctions2.default.ready(_ajaxFunctions2.default.ajaxRequest('GET', apiUrl, function (data) {
-                return callback(JSON.parse(data));
+                return callback(JSON.parse(data), apiUrl);
             }));
         }
         function error() {
@@ -8059,7 +8105,8 @@ function Header(props) {
             null,
             'Will show you bars in your chosen area or in your location'
         ),
-        props.username ? _react2.default.createElement(_MessageToUser2.default, { username: props.username }) : _react2.default.createElement(_MessageToGuest2.default, null)
+        props.username ? _react2.default.createElement(_MessageToUser2.default, { username: props.username,
+            saveLastSearchInStorage: props.saveLastSearchInStorage }) : _react2.default.createElement(_MessageToGuest2.default, { saveLastSearchInStorage: props.saveLastSearchInStorage })
     );
 }
 exports.default = Header;
@@ -8089,7 +8136,7 @@ function MessageToUser(props) {
         props.username,
         _react2.default.createElement(
             "a",
-            { href: "/logout" },
+            { href: "/logout", onClick: props.saveLastSearchInStorage },
             "Logout"
         )
     );
@@ -8121,7 +8168,7 @@ function MessageToGuest(props) {
         "You are not authenticated",
         _react2.default.createElement(
             "a",
-            { href: "/auth/github" },
+            { href: "/auth/github", onClick: props.saveLastSearchInStorage },
             "Login"
         )
     );
@@ -8171,15 +8218,20 @@ var Search = function (_React$Component) {
     _createClass(Search, [{
         key: "handleChange",
         value: function handleChange(e) {
-            this.setState({
-                value: e.target.value
-            });
+            var value = e.target.value[0].toUpperCase() + e.target.value.slice(1);
+            this.setState({ value: value });
         }
     }, {
         key: "handleSubmit",
         value: function handleSubmit(e) {
             this.props.getBarsByLocation(this.state.value);
             e.preventDefault();
+        }
+    }, {
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            var search = window.localStorage.getItem("search");
+            if (search) this.setState({ value: search });
         }
     }, {
         key: "render",
@@ -8405,7 +8457,7 @@ var _react2 = _interopRequireDefault(_react);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function LoginMessage(props) {
-    if (!props.showLoginMessage) return null;
+    if (!props.shownLoginMessage) return null;
 
     var coords = props.loginMessageCoords;
     var style = {
@@ -8428,7 +8480,7 @@ function LoginMessage(props) {
             "Please ",
             _react2.default.createElement(
                 "a",
-                { href: "/auth/github" },
+                { href: "/auth/github", onClick: props.saveLastSearchInStorage },
                 "Login"
             )
         )

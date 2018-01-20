@@ -1,7 +1,7 @@
 import React from 'react';
 
 function LoginMessage(props) {
-    if (!props.showLoginMessage) return null;
+    if (!props.shownLoginMessage) return null;
     
     const coords = props.loginMessageCoords;
     const style = {
@@ -13,7 +13,7 @@ function LoginMessage(props) {
     return (
         <div style={style}>
             <p>You are not authenticated.</p>
-            <p>Please <a href="/auth/github">Login</a></p>
+            <p>Please <a href="/auth/github" onClick={props.saveLastSearchInStorage}>Login</a></p>
         </div>
     );
 }
