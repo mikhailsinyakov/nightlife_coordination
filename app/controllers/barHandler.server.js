@@ -28,7 +28,6 @@ function BarHandler() {
         Bars.findOne({yelp_id}, (err, result) => {
             if (err) return res.sendStatus(500);
             if (!result) return this.addBarAndUserToDb(yelp_id, user_id, res);
-            console.log(new Date())
             result.visitors.push({
                 id: user_id,
                 time: new Date()

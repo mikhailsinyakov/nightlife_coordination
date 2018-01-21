@@ -9,10 +9,10 @@ function Paginator(props) {
     }
     
     function sendRequestWithPageNumber(page) {
-        if (props.lastSearchType == "location") {
-            props.getBarsByLocation(props.lastSearch, page);
+        if (props.lastSearch.type == "location") {
+            props.getBarsByLocation(props.lastSearch.query, page);
         }
-        if (props.lastSearchType == "position") {
+        if (props.lastSearch.type == "position") {
             props.getBarsByPosition(page);
         }
     }

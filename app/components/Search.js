@@ -19,8 +19,8 @@ class Search extends React.Component {
     }
     
     componentDidMount() {
-        const search = window.localStorage.getItem("search");
-        if (search) this.setState({value: search});
+        const query = window.localStorage.getItem("query");
+        if (query) this.setState({value: query});
     }
     
     render() {

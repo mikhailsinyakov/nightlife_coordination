@@ -1052,9 +1052,11 @@ var App = function (_React$Component) {
             notFound: false,
             isShownLoginMessage: false,
             loginMessageCoords: [],
-            lastSearch: "",
-            lastSearchType: "",
-            lastResultsPage: null,
+            lastSearch: {
+                query: "",
+                type: "",
+                page: null
+            },
             resultsPage: 0
         };
         _this.getUserData = _this.getUserData.bind(_this);
@@ -1119,36 +1121,34 @@ var App = function (_React$Component) {
     }, {
         key: 'changeLastSearchAndUrl',
         value: function changeLastSearchAndUrl(type, page) {
-            var search = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
+            var query = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
 
-            this.setState({
-                lastSearchType: type,
-                lastSearch: search,
-                lastResultsPage: page
-            });
+            this.setState({ lastSearch: { query: query, type: type, page: page } });
         }
     }, {
         key: 'saveLastSearchInStorage',
         value: function saveLastSearchInStorage() {
-            if (this.state.lastSearch) window.localStorage.setItem("search", this.state.lastSearch);
-            if (this.state.lastSearchType) window.localStorage.setItem("search_type", this.state.lastSearchType);
-            if (this.state.lastResultsPage) window.localStorage.setItem("page", this.state.lastResultsPage);
+            if (this.state.lastSearch.type) {
+                window.localStorage.setItem("query", this.state.lastSearch.query);
+                window.localStorage.setItem("search_type", this.state.lastSearch.type);
+                window.localStorage.setItem("page", this.state.lastSearch.page);
+            }
         }
     }, {
         key: 'sendRequestWithLastSavedData',
         value: function sendRequestWithLastSavedData() {
             var type = window.localStorage.getItem("search_type");
             if (type == "location") {
-                var search = window.localStorage.getItem("search");
+                var query = window.localStorage.getItem("query");
                 var page = +window.localStorage.getItem("page");
-                this.getBarsByLocation(search, page);
+                this.getBarsByLocation(query, page);
             }
             if (type == "position") {
                 var _page = +window.localStorage.getItem("page");
                 this.getBarsByPosition(_page);
             }
 
-            window.localStorage.removeItem("search");
+            window.localStorage.removeItem("query");
             window.localStorage.removeItem("search_type");
             window.localStorage.removeItem("page");
         }
@@ -1180,7 +1180,7 @@ var App = function (_React$Component) {
     }, {
         key: 'componentDidUpdate',
         value: function componentDidUpdate() {
-            //console.log(this.state.resultsPage)
+            //console.log(this.state)
         }
     }, {
         key: 'render',
@@ -1199,7 +1199,6 @@ var App = function (_React$Component) {
                     removeUserFromBar: this.removeUserFromBar,
                     showLoginMessage: this.showLoginMessage,
                     resultsPage: this.state.resultsPage,
-                    lastSearchType: this.state.lastSearchType,
                     lastSearch: this.state.lastSearch,
                     getBarsByLocation: this.getBarsByLocation,
                     getBarsByPosition: this.getBarsByPosition }),
@@ -8253,8 +8252,8 @@ var Search = function (_React$Component) {
     }, {
         key: "componentDidMount",
         value: function componentDidMount() {
-            var search = window.localStorage.getItem("search");
-            if (search) this.setState({ value: search });
+            var query = window.localStorage.getItem("query");
+            if (query) this.setState({ value: query });
         }
     }, {
         key: "render",
@@ -8333,13 +8332,11 @@ function Results(props) {
         _react2.default.createElement(_Paginator2.default, { resultsPage: props.resultsPage,
             getBarsByLocation: props.getBarsByLocation,
             getBarsByPosition: props.getBarsByPosition,
-            lastSearchType: props.lastSearchType,
             lastSearch: props.lastSearch }),
         resultItems,
         _react2.default.createElement(_Paginator2.default, { resultsPage: props.resultsPage,
             getBarsByLocation: props.getBarsByLocation,
             getBarsByPosition: props.getBarsByPosition,
-            lastSearchType: props.lastSearchType,
             lastSearch: props.lastSearch })
     );
 
@@ -8506,10 +8503,10 @@ function Paginator(props) {
     }
 
     function sendRequestWithPageNumber(page) {
-        if (props.lastSearchType == "location") {
-            props.getBarsByLocation(props.lastSearch, page);
+        if (props.lastSearch.type == "location") {
+            props.getBarsByLocation(props.lastSearch.query, page);
         }
-        if (props.lastSearchType == "position") {
+        if (props.lastSearch.type == "position") {
             props.getBarsByPosition(page);
         }
     }

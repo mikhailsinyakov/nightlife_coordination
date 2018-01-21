@@ -23,13 +23,11 @@ function Results(props) {
             <Paginator  resultsPage={props.resultsPage} 
                         getBarsByLocation={props.getBarsByLocation}
                         getBarsByPosition={props.getBarsByPosition} 
-                        lastSearchType={props.lastSearchType}
                         lastSearch={props.lastSearch}/>
             {resultItems}
             <Paginator  resultsPage={props.resultsPage} 
                         getBarsByLocation={props.getBarsByLocation}
                         getBarsByPosition={props.getBarsByPosition} 
-                        lastSearchType={props.lastSearchType}
                         lastSearch={props.lastSearch}/>
         </div>
     );

@@ -23,9 +23,11 @@ class App extends React.Component {
             notFound: false,
             isShownLoginMessage: false,
             loginMessageCoords: [],
-            lastSearch: "",
-            lastSearchType: "",
-            lastResultsPage: null,
+            lastSearch: {
+                query: "",
+                type: "",
+                page: null
+            },
             resultsPage: 0
         };
         this.getUserData = this.getUserData.bind(this);
@@ -77,33 +79,31 @@ class App extends React.Component {
             });
     }
     
-    changeLastSearchAndUrl(type, page, search = "") {
-        this.setState({
-            lastSearchType: type,
-            lastSearch: search,
-            lastResultsPage: page
-        });
+    changeLastSearchAndUrl(type, page, query = "") {
+        this.setState({lastSearch: {query, type, page}});
     }
     
     saveLastSearchInStorage() {
-        if (this.state.lastSearch) window.localStorage.setItem("search", this.state.lastSearch);
-        if (this.state.lastSearchType) window.localStorage.setItem("search_type", this.state.lastSearchType);
-        if (this.state.lastResultsPage) window.localStorage.setItem("page", this.state.lastResultsPage);
+        if (this.state.lastSearch.type) {
+            window.localStorage.setItem("query", this.state.lastSearch.query);
+            window.localStorage.setItem("search_type", this.state.lastSearch.type);
+            window.localStorage.setItem("page", this.state.lastSearch.page);
+        }
     }
     
     sendRequestWithLastSavedData() {
         const type = window.localStorage.getItem("search_type");
         if (type == "location") {
-            const search = window.localStorage.getItem("search");
+            const query = window.localStorage.getItem("query");
             const page = +window.localStorage.getItem("page");
-            this.getBarsByLocation(search, page);
+            this.getBarsByLocation(query, page);
         }
         if (type == "position") {
             const page = +window.localStorage.getItem("page");
             this.getBarsByPosition(page);
         }
             
-        window.localStorage.removeItem("search");
+        window.localStorage.removeItem("query");
         window.localStorage.removeItem("search_type");
         window.localStorage.removeItem("page");
     }
@@ -130,10 +130,6 @@ class App extends React.Component {
         
     }
     
-    componentDidUpdate() {
-        //console.log(this.state.resultsPage)
-    }
-    
     render() {
         return (
             <div>
@@ -149,7 +145,6 @@ class App extends React.Component {
                         removeUserFromBar={this.removeUserFromBar}
                         showLoginMessage={this.showLoginMessage} 
                         resultsPage={this.state.resultsPage} 
-                        lastSearchType={this.state.lastSearchType}
                         lastSearch={this.state.lastSearch}
                         getBarsByLocation={this.getBarsByLocation}
                         getBarsByPosition={this.getBarsByPosition}/>
