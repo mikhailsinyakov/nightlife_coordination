@@ -7,7 +7,8 @@ const Bar = new Schema({
 	yelp_id: String,
 	visitors: [
 	    {
-	        id: String
+	        id: String,
+	        time: Date
 	    }
 	]
 });

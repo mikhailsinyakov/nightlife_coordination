@@ -1180,7 +1180,7 @@ var App = function (_React$Component) {
     }, {
         key: 'componentDidUpdate',
         value: function componentDidUpdate() {
-            console.log(this.state.resultsPage);
+            //console.log(this.state.resultsPage)
         }
     }, {
         key: 'render',
