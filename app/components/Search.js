@@ -9,7 +9,8 @@ class Search extends React.Component {
     }
     
     handleChange(e) {
-        const value = e.target.value[0].toUpperCase() + e.target.value.slice(1);
+        let value = e.target.value;
+        value = value ? value[0].toUpperCase() + value.slice(1) : "";
         this.setState({value});
     }
     
@@ -25,12 +26,19 @@ class Search extends React.Component {
     
     render() {
         return (
-            <div>
+            <div className="search text-center">
                 <form onSubmit={this.handleSubmit}>
-                    <input type="text" value={this.state.value} onChange={this.handleChange} placeholder="Enter city" required/>
-                    <input type="submit" value="Search" />
+                    <div className="form-row">
+                        <input className="form-control form-control-lg col-sm-9"type="text" 
+                                value={this.state.value} onChange={this.handleChange} 
+                                placeholder="Enter city" required/>
+                        <button className="btn btn-primary col-sm-3" type="submit">Submit</button><br/>
+                    </div>
+                    <button className="btn btn-secondary" type="button" 
+                            onClick={() => this.props.getBarsByPosition(1)}>
+                        Find bars in your position
+                    </button>
                 </form>
-                <button onClick={() => this.props.getBarsByPosition(1)}>Find bars in your position</button>
             </div>
         );
     }

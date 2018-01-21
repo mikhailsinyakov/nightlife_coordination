@@ -16,9 +16,84 @@
 
 /****** Main Styling ******/
 
+
 body {
 	font-family: 'Roboto', sans-serif;
 	font-size: 16px;
 	margin: 0;
 	padding: 0;
+	padding-bottom: 50px;
+	position: relative;
+	min-height: 100vh;
+	border: 1px solid transparent;
+}
+
+header, footer {
+  border-radius: 10px;
+}
+
+header {
+  padding-top: 40px;
+  padding-bottom: 20px;
+}
+
+footer {
+  position: absolute;
+  width: 80%;
+  bottom: 0;
+  padding: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: none;
+  color: yellow;
+}
+
+.header__login-message, .page__login-message {
+  display: inline-block;
+  padding: 10px;
+}
+
+.header__login-message a, .page__login-message a {
+  margin-left: 10px;
+}
+
+.search {
+  margin: 20px;
+}
+
+.search form > button {
+  margin-top: 10px;
+}
+.result__item {
+  display: flex;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 20px;
+}
+
+.result__item p {
+  margin-bottom: 5px;
+  padding-left: 20px;
+}
+
+.result__item b {
+  color: lightblue;
+}
+
+.result__item button {
+  margin-right: 15px;
+}
+
+footer p {
+  margin: 0;
+}
+
+footer a {
+  margin-left: 15px;
 }

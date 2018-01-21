@@ -11,10 +11,10 @@ function LoginMessage(props) {
     };
     
     return (
-        <div style={style}>
-            <p>You are not authenticated.</p>
-            <p>Please <a href="/auth/github" onClick={props.saveLastSearchInStorage}>Login</a></p>
-        </div>
+        <p className="page__login-message bg-dark text-warning" style={style}>
+            You are not authenticated 
+            <a href="/auth/github" className="badge badge-success" onClick={props.saveLastSearchInStorage}>Login</a>
+        </p>
     );
 }
 

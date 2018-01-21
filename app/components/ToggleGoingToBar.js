@@ -4,14 +4,14 @@ function ToggleGoingToBar(props) {
     if (props.userIsVisitor) {
         return (
             <p>
-                <button>{props.visitors} GOING </button>
-                <button onClick={() => props.removeUserFromBar(props.yelp_id)}>I changed my mind</button>
+                <button className="btn btn-primary">{props.visitors} GOING </button>
+                <button className="btn btn-danger" onClick={() => props.removeUserFromBar(props.yelp_id)}>I changed my mind</button>
             </p>
         );
     }
     return (
         <p>
-            <button onClick={ e => {
+            <button className="btn btn-primary" onClick={ e => {
                     e.persist();
                     if (!props.user) {
                         const xCoord = e.pageX + 30;

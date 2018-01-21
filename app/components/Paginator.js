@@ -20,16 +20,26 @@ function Paginator(props) {
     const buttonsList = pagesList.map((val, i) => {
         if (val == page) {
             return (
-                <button key={i} className="active"><b>{val}</b></button>
+                <li className="page-item active" key={i} >
+                    <a href="#" className="page-link" 
+                       onClick={ e => e.preventDefault}>{val}</a>
+                </li>
             );
         }
         return (
-            <button  onClick={() => sendRequestWithPageNumber(val)} 
-                     key={i}>{val}</button>
+            <li className="page-item" key={i}>
+                <a href="#" className="page-link" onClick={ e => {
+                    e.preventDefault();
+                    sendRequestWithPageNumber(val);
+                }
+                }>{val}</a>
+            </li>
         );
     });
     return (
-        <div>{buttonsList}</div>
+        <nav>
+            <ul className="pagination justify-content-center">{buttonsList}</ul>
+        </nav>
     );
 }
 

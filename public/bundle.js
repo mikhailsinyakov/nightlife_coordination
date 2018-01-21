@@ -1178,16 +1178,11 @@ var App = function (_React$Component) {
             if (type) this.sendRequestWithLastSavedData();
         }
     }, {
-        key: 'componentDidUpdate',
-        value: function componentDidUpdate() {
-            //console.log(this.state)
-        }
-    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
                 'div',
-                null,
+                { className: 'container' },
                 _react2.default.createElement(_Header2.default, { username: this.state.user ? this.state.user.github.username : null,
                     saveLastSearchInStorage: this.saveLastSearchInStorage }),
                 _react2.default.createElement(_Search2.default, { getBarsByLocation: this.getBarsByLocation,
@@ -8116,14 +8111,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function Header(props) {
     return _react2.default.createElement(
         'header',
-        null,
+        { className: 'text-center bg-info' },
         _react2.default.createElement(
             'h1',
             null,
             'Nightlife App'
         ),
         _react2.default.createElement(
-            'p',
+            'h5',
             null,
             'Will show you bars in your chosen area or in your location'
         ),
@@ -8153,12 +8148,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function MessageToUser(props) {
     return _react2.default.createElement(
         "p",
-        null,
+        { className: "header__login-message bg-dark text-warning" },
         "Welcome, ",
         props.username,
         _react2.default.createElement(
             "a",
-            { href: "/logout", onClick: props.saveLastSearchInStorage },
+            { href: "/logout", className: "badge badge-success", onClick: props.saveLastSearchInStorage },
             "Logout"
         )
     );
@@ -8186,11 +8181,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function MessageToGuest(props) {
     return _react2.default.createElement(
         "p",
-        null,
+        { className: "header__login-message bg-dark text-warning" },
         "You are not authenticated",
         _react2.default.createElement(
             "a",
-            { href: "/auth/github", onClick: props.saveLastSearchInStorage },
+            { href: "/auth/github", className: "badge badge-success", onClick: props.saveLastSearchInStorage },
             "Login"
         )
     );
@@ -8240,7 +8235,8 @@ var Search = function (_React$Component) {
     _createClass(Search, [{
         key: "handleChange",
         value: function handleChange(e) {
-            var value = e.target.value[0].toUpperCase() + e.target.value.slice(1);
+            var value = e.target.value;
+            value = value ? value[0].toUpperCase() + value.slice(1) : "";
             this.setState({ value: value });
         }
     }, {
@@ -8262,19 +8258,31 @@ var Search = function (_React$Component) {
 
             return _react2.default.createElement(
                 "div",
-                null,
+                { className: "search text-center" },
                 _react2.default.createElement(
                     "form",
                     { onSubmit: this.handleSubmit },
-                    _react2.default.createElement("input", { type: "text", value: this.state.value, onChange: this.handleChange, placeholder: "Enter city", required: true }),
-                    _react2.default.createElement("input", { type: "submit", value: "Search" })
-                ),
-                _react2.default.createElement(
-                    "button",
-                    { onClick: function onClick() {
-                            return _this2.props.getBarsByPosition(1);
-                        } },
-                    "Find bars in your position"
+                    _react2.default.createElement(
+                        "div",
+                        { className: "form-row" },
+                        _react2.default.createElement("input", { className: "form-control form-control-lg col-sm-9", type: "text",
+                            value: this.state.value, onChange: this.handleChange,
+                            placeholder: "Enter city", required: true }),
+                        _react2.default.createElement(
+                            "button",
+                            { className: "btn btn-primary col-sm-3", type: "submit" },
+                            "Submit"
+                        ),
+                        _react2.default.createElement("br", null)
+                    ),
+                    _react2.default.createElement(
+                        "button",
+                        { className: "btn btn-secondary", type: "button",
+                            onClick: function onClick() {
+                                return _this2.props.getBarsByPosition(1);
+                            } },
+                        "Find bars in your position"
+                    )
                 )
             );
         }
@@ -8328,7 +8336,7 @@ function Results(props) {
 
     return _react2.default.createElement(
         'div',
-        null,
+        { className: 'results' },
         _react2.default.createElement(_Paginator2.default, { resultsPage: props.resultsPage,
             getBarsByLocation: props.getBarsByLocation,
             getBarsByPosition: props.getBarsByPosition,
@@ -8388,30 +8396,65 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function ResultItem(props) {
     return _react2.default.createElement(
         'div',
-        null,
-        _react2.default.createElement('img', { src: props.image_url, alt: props.name, width: '50', height: '50' }),
+        { className: 'result__item bg-success text-light clearfix' },
         _react2.default.createElement(
-            'p',
-            null,
+            'a',
+            { href: props.url },
+            _react2.default.createElement('img', { src: props.image_url, alt: props.name, width: '100', height: '100' })
+        ),
+        _react2.default.createElement(
+            'div',
+            { className: 'description' },
             _react2.default.createElement(
-                'a',
-                { href: props.url },
-                props.name
+                'p',
+                null,
+                ' ',
+                _react2.default.createElement(
+                    'b',
+                    null,
+                    'Name:'
+                ),
+                ' ',
+                _react2.default.createElement(
+                    'a',
+                    { href: props.url },
+                    props.name
+                )
             ),
             _react2.default.createElement(
-                'span',
+                'p',
                 null,
-                props.rating
-            )
-        ),
-        _react2.default.createElement(_ToggleGoingToBar2.default, { visitors: props.visitors, userIsVisitor: props.userIsVisitor,
-            yelp_id: props.id, addUserToBar: props.addUserToBar,
-            removeUserFromBar: props.removeUserFromBar,
-            user: props.user, showLoginMessage: props.showLoginMessage }),
-        _react2.default.createElement(
-            'p',
-            null,
-            props.address
+                ' ',
+                _react2.default.createElement(
+                    'b',
+                    null,
+                    'Rating:'
+                ),
+                ' ',
+                _react2.default.createElement(
+                    'span',
+                    null,
+                    props.rating
+                )
+            ),
+            _react2.default.createElement(
+                'p',
+                null,
+                ' ',
+                _react2.default.createElement(
+                    'b',
+                    null,
+                    'Address:'
+                ),
+                ' ',
+                props.address ? props.address : "Unknown"
+            ),
+            _react2.default.createElement(_ToggleGoingToBar2.default, { visitors: props.visitors,
+                userIsVisitor: props.userIsVisitor,
+                addUserToBar: props.addUserToBar,
+                removeUserFromBar: props.removeUserFromBar,
+                user: props.user, yelp_id: props.id,
+                showLoginMessage: props.showLoginMessage })
         )
     );
 }
@@ -8438,29 +8481,29 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function ToggleGoingToBar(props) {
     if (props.userIsVisitor) {
         return _react2.default.createElement(
-            'p',
+            "p",
             null,
             _react2.default.createElement(
-                'button',
-                null,
+                "button",
+                { className: "btn btn-primary" },
                 props.visitors,
-                ' GOING '
+                " GOING "
             ),
             _react2.default.createElement(
-                'button',
-                { onClick: function onClick() {
+                "button",
+                { className: "btn btn-danger", onClick: function onClick() {
                         return props.removeUserFromBar(props.yelp_id);
                     } },
-                'I changed my mind'
+                "I changed my mind"
             )
         );
     }
     return _react2.default.createElement(
-        'p',
+        "p",
         null,
         _react2.default.createElement(
-            'button',
-            { onClick: function onClick(e) {
+            "button",
+            { className: "btn btn-primary", onClick: function onClick(e) {
                     e.persist();
                     if (!props.user) {
                         var xCoord = e.pageX + 30;
@@ -8470,7 +8513,7 @@ function ToggleGoingToBar(props) {
                     props.addUserToBar(props.yelp_id);
                 } },
             props.visitors,
-            ' GOING '
+            " GOING "
         )
     );
 }
@@ -8514,28 +8557,39 @@ function Paginator(props) {
     var buttonsList = pagesList.map(function (val, i) {
         if (val == page) {
             return _react2.default.createElement(
-                "button",
-                { key: i, className: "active" },
+                "li",
+                { className: "page-item active", key: i },
                 _react2.default.createElement(
-                    "b",
-                    null,
+                    "a",
+                    { href: "#", className: "page-link",
+                        onClick: function onClick(e) {
+                            return e.preventDefault;
+                        } },
                     val
                 )
             );
         }
         return _react2.default.createElement(
-            "button",
-            { onClick: function onClick() {
-                    return sendRequestWithPageNumber(val);
-                },
-                key: i },
-            val
+            "li",
+            { className: "page-item", key: i },
+            _react2.default.createElement(
+                "a",
+                { href: "#", className: "page-link", onClick: function onClick(e) {
+                        e.preventDefault();
+                        sendRequestWithPageNumber(val);
+                    } },
+                val
+            )
         );
     });
     return _react2.default.createElement(
-        "div",
+        "nav",
         null,
-        buttonsList
+        _react2.default.createElement(
+            "ul",
+            { className: "pagination justify-content-center" },
+            buttonsList
+        )
     );
 }
 
@@ -8561,11 +8615,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function Footer(props) {
     return _react2.default.createElement(
         "footer",
-        null,
+        { className: "text-center bg-secondary" },
         _react2.default.createElement(
             "p",
             null,
-            "Created by Mikhail Sinyakov",
             _react2.default.createElement(
                 "a",
                 { href: "https://github.com/mikhailsinyakov/nightlife_coordination" },
@@ -8575,12 +8628,17 @@ function Footer(props) {
                 "a",
                 { href: "https://www.freecodecamp.org/mikhailsinyakov" },
                 "FreeCodeCamp"
-            )
-        ),
-        _react2.default.createElement(
-            "p",
-            null,
-            "React Bootstrap",
+            ),
+            _react2.default.createElement(
+                "a",
+                { href: "https://reactjs.org" },
+                "React"
+            ),
+            _react2.default.createElement(
+                "a",
+                { href: "https://getbootstrap.com" },
+                "Bootstrap"
+            ),
             _react2.default.createElement(
                 "a",
                 { href: "https://github.com/johnstonbl01/clementinejs-fcc.git" },
@@ -8625,22 +8683,13 @@ function LoginMessage(props) {
     };
 
     return _react2.default.createElement(
-        "div",
-        { style: style },
+        "p",
+        { className: "page__login-message bg-dark text-warning", style: style },
+        "You are not authenticated",
         _react2.default.createElement(
-            "p",
-            null,
-            "You are not authenticated."
-        ),
-        _react2.default.createElement(
-            "p",
-            null,
-            "Please ",
-            _react2.default.createElement(
-                "a",
-                { href: "/auth/github", onClick: props.saveLastSearchInStorage },
-                "Login"
-            )
+            "a",
+            { href: "/auth/github", className: "badge badge-success", onClick: props.saveLastSearchInStorage },
+            "Login"
         )
     );
 }

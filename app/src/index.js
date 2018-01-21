@@ -132,7 +132,7 @@ class App extends React.Component {
     
     render() {
         return (
-            <div>
+            <div className="container">
                 <Header username={this.state.user ? this.state.user.github.username
                                                   : null}
                         saveLastSearchInStorage={this.saveLastSearchInStorage}/>

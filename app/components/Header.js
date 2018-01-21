@@ -4,9 +4,9 @@ import MessageToGuest from './MessageToGuest.js';
 
 function Header(props) {
     return (
-        <header>
+        <header className="text-center bg-info">
             <h1>Nightlife App</h1>
-            <p>Will show you bars in your chosen area or in your location</p>
+            <h5>Will show you bars in your chosen area or in your location</h5>
             {props.username ? <MessageToUser username={props.username}
                                              saveLastSearchInStorage={props.saveLastSearchInStorage}/>
                             : <MessageToGuest  saveLastSearchInStorage={props.saveLastSearchInStorage}/>}

@@ -19,7 +19,7 @@ function Results(props) {
     });
     
     return (
-        <div>
+        <div className="results">
             <Paginator  resultsPage={props.resultsPage} 
                         getBarsByLocation={props.getBarsByLocation}
                         getBarsByPosition={props.getBarsByPosition} 
