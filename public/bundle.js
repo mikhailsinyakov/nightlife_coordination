@@ -1066,6 +1066,7 @@ var App = function (_React$Component) {
         _this.addUserToBar = _this.addUserToBar.bind(_this);
         _this.removeUserFromBar = _this.removeUserFromBar.bind(_this);
         _this.showLoginMessage = _this.showLoginMessage.bind(_this);
+        _this.hideLoginMessage = _this.hideLoginMessage.bind(_this);
         _this.changeLastSearchAndUrl = _this.changeLastSearchAndUrl.bind(_this);
         _this.saveLastSearchInStorage = _this.saveLastSearchInStorage.bind(_this);
         _this.sendRequestWithLastSavedData = _this.sendRequestWithLastSavedData.bind(_this);
@@ -1169,6 +1170,14 @@ var App = function (_React$Component) {
             this.setState({ loginMessageCoords: [x, y] });
         }
     }, {
+        key: 'hideLoginMessage',
+        value: function hideLoginMessage() {
+            this.setState({
+                isShownLoginMessage: false,
+                loginMessageCoords: []
+            });
+        }
+    }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
             this.getUserData();
@@ -1200,7 +1209,8 @@ var App = function (_React$Component) {
                 _react2.default.createElement(_Footer2.default, null),
                 _react2.default.createElement(_LoginMessage2.default, { isShownLoginMessage: this.state.isShownLoginMessage,
                     loginMessageCoords: this.state.loginMessageCoords,
-                    saveLastSearchInStorage: this.saveLastSearchInStorage })
+                    saveLastSearchInStorage: this.saveLastSearchInStorage,
+                    hideLoginMessage: this.hideLoginMessage })
             );
         }
     }]);
@@ -8676,20 +8686,32 @@ function LoginMessage(props) {
     if (!props.isShownLoginMessage) return null;
 
     var coords = props.loginMessageCoords;
-    var style = {
+    var parStyle = {
         position: "absolute",
         left: coords[0] + "px",
         top: coords[1] + "px"
     };
+    var spanStyle = {
+        cursor: "pointer",
+        display: "block",
+        fontSize: "30px",
+        transform: "translate(240px, -65px)",
+        position: "absolute"
+    };
 
     return _react2.default.createElement(
         "p",
-        { className: "page__login-message bg-dark text-warning", style: style },
+        { className: "page__login-message bg-dark text-warning", style: parStyle },
         "You are not authenticated",
         _react2.default.createElement(
             "a",
             { href: "/auth/github", className: "badge badge-success", onClick: props.saveLastSearchInStorage },
             "Login"
+        ),
+        _react2.default.createElement(
+            "span",
+            { style: spanStyle, onClick: props.hideLoginMessage },
+            "\xD7"
         )
     );
 }

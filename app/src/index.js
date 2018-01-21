@@ -37,6 +37,7 @@ class App extends React.Component {
         this.addUserToBar = this.addUserToBar.bind(this);
         this.removeUserFromBar = this.removeUserFromBar.bind(this);
         this.showLoginMessage = this.showLoginMessage.bind(this);
+        this.hideLoginMessage = this.hideLoginMessage.bind(this);
         this.changeLastSearchAndUrl = this.changeLastSearchAndUrl.bind(this);
         this.saveLastSearchInStorage = this.saveLastSearchInStorage.bind(this);
         this.sendRequestWithLastSavedData = this.sendRequestWithLastSavedData.bind(this);
@@ -121,6 +122,13 @@ class App extends React.Component {
         this.setState({loginMessageCoords: [x, y]});
     }
     
+    hideLoginMessage() {
+        this.setState({
+            isShownLoginMessage: false,
+            loginMessageCoords: []
+        });
+    }
+    
     componentDidMount() {
         this.getUserData();
         this.getSelectedBars();
@@ -152,7 +160,8 @@ class App extends React.Component {
                         
                 <LoginMessage isShownLoginMessage={this.state.isShownLoginMessage}
                               loginMessageCoords={this.state.loginMessageCoords}
-                              saveLastSearchInStorage={this.saveLastSearchInStorage} />
+                              saveLastSearchInStorage={this.saveLastSearchInStorage} 
+                              hideLoginMessage={this.hideLoginMessage}/>
             </div>
         );
     }
