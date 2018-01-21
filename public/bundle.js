@@ -1017,7 +1017,11 @@ var _Results = __webpack_require__(35);
 
 var _Results2 = _interopRequireDefault(_Results);
 
-var _LoginMessage = __webpack_require__(38);
+var _Footer = __webpack_require__(38);
+
+var _Footer2 = _interopRequireDefault(_Footer);
+
+var _LoginMessage = __webpack_require__(39);
 
 var _LoginMessage2 = _interopRequireDefault(_LoginMessage);
 
@@ -1181,6 +1185,7 @@ var App = function (_React$Component) {
                     selectedBars: this.state.selectedBars, notFound: this.state.notFound,
                     addUserToBar: this.addUserToBar, removeUserFromBar: this.removeUserFromBar,
                     showLoginMessage: this.showLoginMessage }),
+                _react2.default.createElement(_Footer2.default, null),
                 _react2.default.createElement(_LoginMessage2.default, { shownLoginMessage: this.state.shownLoginMessage,
                     loginMessageCoords: this.state.loginMessageCoords,
                     saveLastSearchInStorage: this.saveLastSearchInStorage })
@@ -8441,6 +8446,62 @@ exports.default = ToggleGoingToBar;
 
 /***/ }),
 /* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Footer(props) {
+    return _react2.default.createElement(
+        "footer",
+        null,
+        _react2.default.createElement(
+            "p",
+            null,
+            "Created by Mikhail Sinyakov",
+            _react2.default.createElement(
+                "a",
+                { href: "https://github.com/mikhailsinyakov/nightlife_coordination" },
+                "Github"
+            ),
+            _react2.default.createElement(
+                "a",
+                { href: "https://www.freecodecamp.org/mikhailsinyakov" },
+                "FreeCodeCamp"
+            )
+        ),
+        _react2.default.createElement(
+            "p",
+            null,
+            "React Bootstrap",
+            _react2.default.createElement(
+                "a",
+                { href: "https://github.com/johnstonbl01/clementinejs-fcc.git" },
+                "Clementine.js"
+            ),
+            _react2.default.createElement(
+                "a",
+                { href: "https://www.yelp.com/developers/documentation/v3" },
+                "Yelp API"
+            )
+        )
+    );
+}
+
+exports.default = Footer;
+
+/***/ }),
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -6,6 +6,7 @@ import YelpController from '../controllers/yelpController.client.js';
 import Header from '../components/Header.js';
 import Search from '../components/Search.js';
 import Results from '../components/Results.js';
+import Footer from '../components/Footer.js';
 import LoginMessage from '../components/LoginMessage.js';
 
 const app = document.querySelector("#root");
@@ -134,6 +135,7 @@ class App extends React.Component {
                         selectedBars={this.state.selectedBars} notFound={this.state.notFound}
                         addUserToBar={this.addUserToBar} removeUserFromBar={this.removeUserFromBar}
                         showLoginMessage={this.showLoginMessage}/>
+                <Footer />
                         
                 <LoginMessage shownLoginMessage={this.state.shownLoginMessage}
                               loginMessageCoords={this.state.loginMessageCoords}

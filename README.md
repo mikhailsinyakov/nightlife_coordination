@@ -8,7 +8,7 @@ As an authenticated user you can:
     
 When you login you should not have to search again
 
-
+To find bars in the cities was used [Yelp API](https://www.yelp.com/developers/documentation/v3)
 Created by using [Clementine.js](https://github.com/johnstonbl01/clementinejs-fcc.git) boilerplate 
 
 ## Clementine License
