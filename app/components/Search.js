@@ -14,7 +14,7 @@ class Search extends React.Component {
     }
     
     handleSubmit(e) {
-        this.props.getBarsByLocation(this.state.value);
+        this.props.getBarsByLocation(this.state.value, 1);
         e.preventDefault();
     }
     
@@ -30,7 +30,7 @@ class Search extends React.Component {
                     <input type="text" value={this.state.value} onChange={this.handleChange} placeholder="Enter city" required/>
                     <input type="submit" value="Search" />
                 </form>
-                <button onClick={this.props.getBarsByPosition}>Find bars in your position</button>
+                <button onClick={() => this.props.getBarsByPosition(1)}>Find bars in your position</button>
             </div>
         );
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 
 function LoginMessage(props) {
-    if (!props.shownLoginMessage) return null;
+    if (!props.isShownLoginMessage) return null;
     
     const coords = props.loginMessageCoords;
     const style = {

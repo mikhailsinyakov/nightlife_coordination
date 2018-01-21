@@ -21,10 +21,12 @@ class App extends React.Component {
             bars: [],
             selectedBars: [],
             notFound: false,
-            shownLoginMessage: false,
+            isShownLoginMessage: false,
             loginMessageCoords: [],
             lastSearch: "",
-            lastSearchType: ""
+            lastSearchType: "",
+            lastResultsPage: null,
+            resultsPage: 0
         };
         this.getUserData = this.getUserData.bind(this);
         this.getSelectedBars = this.getSelectedBars.bind(this);
@@ -50,51 +52,60 @@ class App extends React.Component {
         });
     }
     
-    getBarsByLocation(search) {
-        yelpController.getBarsByLocation(search, (bars, url) => {
+    getBarsByLocation(search, page) {
+        yelpController.getBarsByLocation(search, page, (bars, url) => {
                 if (bars.length) this.setState({
                     bars,
-                    notFound: false
+                    notFound: false,
+                    resultsPage: page
                 });
                 else this.setState({notFound: true});
-                this.changeLastSearchAndUrl("location", search);
+                this.changeLastSearchAndUrl("location", page, search);
             });
     }
     
     
-    getBarsByPosition() {
-        yelpController.getBarsByPosition( (bars, url) => {
+    getBarsByPosition(page) {
+        yelpController.getBarsByPosition( page, (bars, url) => {
                 if (bars.length) this.setState({
                     bars,
-                    notFound: false
+                    notFound: false,
+                    resultsPage: page
                 });
                 else this.setState({notFound: true});
-                this.changeLastSearchAndUrl("position");
+                this.changeLastSearchAndUrl("position", page);
             });
     }
     
-    changeLastSearchAndUrl(type, search = "") {
+    changeLastSearchAndUrl(type, page, search = "") {
         this.setState({
             lastSearchType: type,
-            lastSearch: search
+            lastSearch: search,
+            lastResultsPage: page
         });
     }
     
     saveLastSearchInStorage() {
         if (this.state.lastSearch) window.localStorage.setItem("search", this.state.lastSearch);
         if (this.state.lastSearchType) window.localStorage.setItem("search_type", this.state.lastSearchType);
+        if (this.state.lastResultsPage) window.localStorage.setItem("page", this.state.lastResultsPage);
     }
     
     sendRequestWithLastSavedData() {
         const type = window.localStorage.getItem("search_type");
         if (type == "location") {
             const search = window.localStorage.getItem("search");
-            this.getBarsByLocation(search);
+            const page = +window.localStorage.getItem("page");
+            this.getBarsByLocation(search, page);
         }
-        if (type == "position") this.getBarsByPosition();
+        if (type == "position") {
+            const page = +window.localStorage.getItem("page");
+            this.getBarsByPosition(page);
+        }
             
         window.localStorage.removeItem("search");
         window.localStorage.removeItem("search_type");
+        window.localStorage.removeItem("page");
     }
     
     addUserToBar(yelp_id) {
@@ -106,7 +117,7 @@ class App extends React.Component {
     }
     
     showLoginMessage(x, y) {
-        if (!this.state.shownLoginMessage) this.setState({shownLoginMessage: true});
+        if (!this.state.isShownLoginMessage) this.setState({isShownLoginMessage: true});
         this.setState({loginMessageCoords: [x, y]});
     }
     
@@ -120,7 +131,7 @@ class App extends React.Component {
     }
     
     componentDidUpdate() {
-        //console.log(this.state.lastSearch, this.state.lastYelpRequestUrl)
+        //console.log(this.state.resultsPage)
     }
     
     render() {
@@ -132,12 +143,19 @@ class App extends React.Component {
                 <Search getBarsByLocation={this.getBarsByLocation}
                         getBarsByPosition={this.getBarsByPosition}/>
                 <Results user={this.state.user} bars={this.state.bars} 
-                        selectedBars={this.state.selectedBars} notFound={this.state.notFound}
-                        addUserToBar={this.addUserToBar} removeUserFromBar={this.removeUserFromBar}
-                        showLoginMessage={this.showLoginMessage}/>
+                        selectedBars={this.state.selectedBars} 
+                        notFound={this.state.notFound}
+                        addUserToBar={this.addUserToBar} 
+                        removeUserFromBar={this.removeUserFromBar}
+                        showLoginMessage={this.showLoginMessage} 
+                        resultsPage={this.state.resultsPage} 
+                        lastSearchType={this.state.lastSearchType}
+                        lastSearch={this.state.lastSearch}
+                        getBarsByLocation={this.getBarsByLocation}
+                        getBarsByPosition={this.getBarsByPosition}/>
                 <Footer />
                         
-                <LoginMessage shownLoginMessage={this.state.shownLoginMessage}
+                <LoginMessage isShownLoginMessage={this.state.isShownLoginMessage}
                               loginMessageCoords={this.state.loginMessageCoords}
                               saveLastSearchInStorage={this.saveLastSearchInStorage} />
             </div>

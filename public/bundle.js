@@ -1017,11 +1017,11 @@ var _Results = __webpack_require__(35);
 
 var _Results2 = _interopRequireDefault(_Results);
 
-var _Footer = __webpack_require__(38);
+var _Footer = __webpack_require__(39);
 
 var _Footer2 = _interopRequireDefault(_Footer);
 
-var _LoginMessage = __webpack_require__(39);
+var _LoginMessage = __webpack_require__(40);
 
 var _LoginMessage2 = _interopRequireDefault(_LoginMessage);
 
@@ -1050,10 +1050,12 @@ var App = function (_React$Component) {
             bars: [],
             selectedBars: [],
             notFound: false,
-            shownLoginMessage: false,
+            isShownLoginMessage: false,
             loginMessageCoords: [],
             lastSearch: "",
-            lastSearchType: ""
+            lastSearchType: "",
+            lastResultsPage: null,
+            resultsPage: 0
         };
         _this.getUserData = _this.getUserData.bind(_this);
         _this.getSelectedBars = _this.getSelectedBars.bind(_this);
@@ -1088,38 +1090,41 @@ var App = function (_React$Component) {
         }
     }, {
         key: 'getBarsByLocation',
-        value: function getBarsByLocation(search) {
+        value: function getBarsByLocation(search, page) {
             var _this4 = this;
 
-            yelpController.getBarsByLocation(search, function (bars, url) {
+            yelpController.getBarsByLocation(search, page, function (bars, url) {
                 if (bars.length) _this4.setState({
                     bars: bars,
-                    notFound: false
+                    notFound: false,
+                    resultsPage: page
                 });else _this4.setState({ notFound: true });
-                _this4.changeLastSearchAndUrl("location", search);
+                _this4.changeLastSearchAndUrl("location", page, search);
             });
         }
     }, {
         key: 'getBarsByPosition',
-        value: function getBarsByPosition() {
+        value: function getBarsByPosition(page) {
             var _this5 = this;
 
-            yelpController.getBarsByPosition(function (bars, url) {
+            yelpController.getBarsByPosition(page, function (bars, url) {
                 if (bars.length) _this5.setState({
                     bars: bars,
-                    notFound: false
+                    notFound: false,
+                    resultsPage: page
                 });else _this5.setState({ notFound: true });
-                _this5.changeLastSearchAndUrl("position");
+                _this5.changeLastSearchAndUrl("position", page);
             });
         }
     }, {
         key: 'changeLastSearchAndUrl',
-        value: function changeLastSearchAndUrl(type) {
-            var search = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+        value: function changeLastSearchAndUrl(type, page) {
+            var search = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
 
             this.setState({
                 lastSearchType: type,
-                lastSearch: search
+                lastSearch: search,
+                lastResultsPage: page
             });
         }
     }, {
@@ -1127,6 +1132,7 @@ var App = function (_React$Component) {
         value: function saveLastSearchInStorage() {
             if (this.state.lastSearch) window.localStorage.setItem("search", this.state.lastSearch);
             if (this.state.lastSearchType) window.localStorage.setItem("search_type", this.state.lastSearchType);
+            if (this.state.lastResultsPage) window.localStorage.setItem("page", this.state.lastResultsPage);
         }
     }, {
         key: 'sendRequestWithLastSavedData',
@@ -1134,12 +1140,17 @@ var App = function (_React$Component) {
             var type = window.localStorage.getItem("search_type");
             if (type == "location") {
                 var search = window.localStorage.getItem("search");
-                this.getBarsByLocation(search);
+                var page = +window.localStorage.getItem("page");
+                this.getBarsByLocation(search, page);
             }
-            if (type == "position") this.getBarsByPosition();
+            if (type == "position") {
+                var _page = +window.localStorage.getItem("page");
+                this.getBarsByPosition(_page);
+            }
 
             window.localStorage.removeItem("search");
             window.localStorage.removeItem("search_type");
+            window.localStorage.removeItem("page");
         }
     }, {
         key: 'addUserToBar',
@@ -1154,7 +1165,7 @@ var App = function (_React$Component) {
     }, {
         key: 'showLoginMessage',
         value: function showLoginMessage(x, y) {
-            if (!this.state.shownLoginMessage) this.setState({ shownLoginMessage: true });
+            if (!this.state.isShownLoginMessage) this.setState({ isShownLoginMessage: true });
             this.setState({ loginMessageCoords: [x, y] });
         }
     }, {
@@ -1169,7 +1180,7 @@ var App = function (_React$Component) {
     }, {
         key: 'componentDidUpdate',
         value: function componentDidUpdate() {
-            //console.log(this.state.lastSearch, this.state.lastYelpRequestUrl)
+            console.log(this.state.resultsPage);
         }
     }, {
         key: 'render',
@@ -1182,11 +1193,18 @@ var App = function (_React$Component) {
                 _react2.default.createElement(_Search2.default, { getBarsByLocation: this.getBarsByLocation,
                     getBarsByPosition: this.getBarsByPosition }),
                 _react2.default.createElement(_Results2.default, { user: this.state.user, bars: this.state.bars,
-                    selectedBars: this.state.selectedBars, notFound: this.state.notFound,
-                    addUserToBar: this.addUserToBar, removeUserFromBar: this.removeUserFromBar,
-                    showLoginMessage: this.showLoginMessage }),
+                    selectedBars: this.state.selectedBars,
+                    notFound: this.state.notFound,
+                    addUserToBar: this.addUserToBar,
+                    removeUserFromBar: this.removeUserFromBar,
+                    showLoginMessage: this.showLoginMessage,
+                    resultsPage: this.state.resultsPage,
+                    lastSearchType: this.state.lastSearchType,
+                    lastSearch: this.state.lastSearch,
+                    getBarsByLocation: this.getBarsByLocation,
+                    getBarsByPosition: this.getBarsByPosition }),
                 _react2.default.createElement(_Footer2.default, null),
-                _react2.default.createElement(_LoginMessage2.default, { shownLoginMessage: this.state.shownLoginMessage,
+                _react2.default.createElement(_LoginMessage2.default, { isShownLoginMessage: this.state.isShownLoginMessage,
                     loginMessageCoords: this.state.loginMessageCoords,
                     saveLastSearchInStorage: this.saveLastSearchInStorage })
             );
@@ -8044,21 +8062,21 @@ var appUrl = window.location.origin;
 
 function YelpController(callback) {
 
-    this.getBarsByLocation = function (search, callback) {
-        var apiUrl = appUrl + ('/api/yelpRequest/location/' + search + '/1');
+    this.getBarsByLocation = function (search, page, callback) {
+        var apiUrl = appUrl + ('/api/yelpRequest/location/' + search + '/' + page);
 
         _ajaxFunctions2.default.ready(_ajaxFunctions2.default.ajaxRequest('GET', apiUrl, function (data) {
             return callback(JSON.parse(data), apiUrl);
         }));
     };
 
-    this.getBarsByPosition = function (callback) {
+    this.getBarsByPosition = function (page, callback) {
         window.navigator.geolocation.getCurrentPosition(success, error);
 
         function success(pos) {
             var latitude = pos.coords.latitude;
             var longitude = pos.coords.longitude;
-            var apiUrl = appUrl + ('/api/yelpRequest/position/' + latitude + '/' + longitude + '/1');
+            var apiUrl = appUrl + ('/api/yelpRequest/position/' + latitude + '/' + longitude + '/' + page);
             _ajaxFunctions2.default.ready(_ajaxFunctions2.default.ajaxRequest('GET', apiUrl, function (data) {
                 return callback(JSON.parse(data), apiUrl);
             }));
@@ -8229,7 +8247,7 @@ var Search = function (_React$Component) {
     }, {
         key: "handleSubmit",
         value: function handleSubmit(e) {
-            this.props.getBarsByLocation(this.state.value);
+            this.props.getBarsByLocation(this.state.value, 1);
             e.preventDefault();
         }
     }, {
@@ -8241,6 +8259,8 @@ var Search = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             return _react2.default.createElement(
                 "div",
                 null,
@@ -8252,7 +8272,9 @@ var Search = function (_React$Component) {
                 ),
                 _react2.default.createElement(
                     "button",
-                    { onClick: this.props.getBarsByPosition },
+                    { onClick: function onClick() {
+                            return _this2.props.getBarsByPosition(1);
+                        } },
                     "Find bars in your position"
                 )
             );
@@ -8283,6 +8305,10 @@ var _ResultItem = __webpack_require__(36);
 
 var _ResultItem2 = _interopRequireDefault(_ResultItem);
 
+var _Paginator = __webpack_require__(38);
+
+var _Paginator2 = _interopRequireDefault(_Paginator);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function Results(props) {
@@ -8304,7 +8330,17 @@ function Results(props) {
     return _react2.default.createElement(
         'div',
         null,
-        resultItems
+        _react2.default.createElement(_Paginator2.default, { resultsPage: props.resultsPage,
+            getBarsByLocation: props.getBarsByLocation,
+            getBarsByPosition: props.getBarsByPosition,
+            lastSearchType: props.lastSearchType,
+            lastSearch: props.lastSearch }),
+        resultItems,
+        _react2.default.createElement(_Paginator2.default, { resultsPage: props.resultsPage,
+            getBarsByLocation: props.getBarsByLocation,
+            getBarsByPosition: props.getBarsByPosition,
+            lastSearchType: props.lastSearchType,
+            lastSearch: props.lastSearch })
     );
 
     function getVisitors(id) {
@@ -8461,6 +8497,70 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function Paginator(props) {
+    var page = props.resultsPage;
+    if (page < 1) return null;
+    var pagesList = [];
+    for (var i = page - 2; i <= page + 2; i++) {
+        if (i > 0) pagesList.push(i);
+    }
+
+    function sendRequestWithPageNumber(page) {
+        if (props.lastSearchType == "location") {
+            props.getBarsByLocation(props.lastSearch, page);
+        }
+        if (props.lastSearchType == "position") {
+            props.getBarsByPosition(page);
+        }
+    }
+
+    var buttonsList = pagesList.map(function (val, i) {
+        if (val == page) {
+            return _react2.default.createElement(
+                "button",
+                { key: i, className: "active" },
+                _react2.default.createElement(
+                    "b",
+                    null,
+                    val
+                )
+            );
+        }
+        return _react2.default.createElement(
+            "button",
+            { onClick: function onClick() {
+                    return sendRequestWithPageNumber(val);
+                },
+                key: i },
+            val
+        );
+    });
+    return _react2.default.createElement(
+        "div",
+        null,
+        buttonsList
+    );
+}
+
+exports.default = Paginator;
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function Footer(props) {
     return _react2.default.createElement(
         "footer",
@@ -8501,7 +8601,7 @@ function Footer(props) {
 exports.default = Footer;
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8518,7 +8618,7 @@ var _react2 = _interopRequireDefault(_react);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function LoginMessage(props) {
-    if (!props.shownLoginMessage) return null;
+    if (!props.isShownLoginMessage) return null;
 
     var coords = props.loginMessageCoords;
     var style = {

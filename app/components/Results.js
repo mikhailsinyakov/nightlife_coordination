@@ -1,5 +1,6 @@
 import React from 'react';
 import ResultItem from './ResultItem.js';
+import Paginator from './Paginator.js';
 
 function Results(props) {
     if (props.notFound) {
@@ -18,7 +19,19 @@ function Results(props) {
     });
     
     return (
-        <div>{resultItems}</div>
+        <div>
+            <Paginator  resultsPage={props.resultsPage} 
+                        getBarsByLocation={props.getBarsByLocation}
+                        getBarsByPosition={props.getBarsByPosition} 
+                        lastSearchType={props.lastSearchType}
+                        lastSearch={props.lastSearch}/>
+            {resultItems}
+            <Paginator  resultsPage={props.resultsPage} 
+                        getBarsByLocation={props.getBarsByLocation}
+                        getBarsByPosition={props.getBarsByPosition} 
+                        lastSearchType={props.lastSearchType}
+                        lastSearch={props.lastSearch}/>
+        </div>
     );
     
     function getVisitors(id) {
