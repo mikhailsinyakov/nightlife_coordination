@@ -8,13 +8,9 @@ module.exports = {
         filename: 'bundle.js'
     },
     module: {
-        loaders: [{
-             test: /.jsx?$/,
-             loader: 'babel-loader',
-             exclude: '/node-modules/',
-             query: {
-                 presets: ["react", "env"]
-             }
+        rules: [{
+            use: 'babel-loader'
         }]
-    }
+    },
+    mode: 'development'
 };
